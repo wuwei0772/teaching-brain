@@ -1,0 +1,1942 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>教学大脑搭建规划</title>
+<style>
+  :root {
+    --primary: #1a3a5c;
+    --primary-light: #2a5298;
+    --accent: #2e7d9a;
+    --accent-light: #e8f4f8;
+    --success: #2e7d57;
+    --success-bg: #e8f5ed;
+    --warning: #7d6b2e;
+    --warning-bg: #fdf6e3;
+    --danger-color: #c0392b;
+    --danger-bg: #fdf0f0;
+    --neutral: #5a6778;
+    --neutral-bg: #f0f2f5;
+    --bg: #f4f5f7;
+    --card: #ffffff;
+    --border: #dde1e7;
+    --text: #1a2332;
+    --text-muted: #5a6778;
+    --text-light: #8a94a0;
+    --radius: 8px;
+    --radius-lg: 12px;
+    --shadow: 0 1px 4px rgba(0,0,0,0.08), 0 2px 12px rgba(0,0,0,0.04);
+    --shadow-hover: 0 4px 16px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
+    --max-width: 1200px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  .section { scroll-margin-top: 48px; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.65;
+  }
+
+  /* ── Nav ── */
+  .top-nav {
+    background: var(--primary);
+    position: sticky; top: 0; z-index: 200;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .top-nav-inner {
+    max-width: var(--max-width); margin: 0 auto;
+    padding: 0 24px; display: flex; align-items: center;
+    overflow-x: auto; scrollbar-width: none;
+  }
+  .top-nav-inner::-webkit-scrollbar { display: none; }
+  .nav-brand {
+    color: rgba(255,255,255,0.9); font-size: 14px; font-weight: 600;
+    white-space: nowrap; padding: 14px 20px 14px 0;
+    border-right: 1px solid rgba(255,255,255,0.15); margin-right: 4px;
+  }
+  .top-nav a {
+    color: rgba(255,255,255,0.75); text-decoration: none;
+    font-size: 14px; padding: 14px 16px; white-space: nowrap;
+    transition: color 0.2s, background 0.2s;
+  }
+  .top-nav a:hover { color: #fff; background: rgba(255,255,255,0.08); }
+
+  /* ── Hero ── */
+  .hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 60%, #1e5f8a 100%);
+    color: white; padding: 56px 24px 48px;
+  }
+  .hero-inner { max-width: var(--max-width); margin: 0 auto; }
+  .hero-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.9); font-size: 12px; letter-spacing: 0.1em;
+    padding: 4px 12px; border-radius: 20px; margin-bottom: 20px; text-transform: uppercase;
+  }
+  .hero h1 {
+    font-size: clamp(24px, 3vw, 36px); font-weight: 700;
+    line-height: 1.3; margin-bottom: 10px;
+  }
+  .hero-sub {
+    font-size: clamp(15px, 1.5vw, 17px); color: rgba(255,255,255,0.75);
+    margin-bottom: 32px;
+  }
+  .definition-box {
+    background: rgba(255,255,255,0.1); border-left: 3px solid rgba(255,255,255,0.5);
+    padding: 16px 20px; border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 24px; max-width: 760px; font-size: 15px;
+    color: rgba(255,255,255,0.92); line-height: 1.7;
+  }
+  .formula-box {
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18);
+    padding: 14px 20px; border-radius: var(--radius); max-width: 760px;
+  }
+  .formula-box .label {
+    font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em;
+    color: rgba(255,255,255,0.5); margin-bottom: 6px;
+  }
+  .formula-box .formula {
+    font-weight: 600; font-size: 14px; line-height: 1.8; color: rgba(255,255,255,0.95);
+  }
+
+  /* ── Section ── */
+  .section {
+    max-width: var(--max-width); margin: 0 auto; padding: 48px 24px;
+  }
+  .section + .section { padding-top: 0; }
+  .section-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 28px; }
+  .section-num {
+    font-size: 12px; font-weight: 700; color: var(--accent); letter-spacing: 0.1em;
+    text-transform: uppercase; background: var(--accent-light);
+    padding: 3px 8px; border-radius: 4px; white-space: nowrap;
+  }
+  .section-title { font-size: 22px; font-weight: 700; color: var(--primary); }
+
+  /* ── Overview Cards ── */
+  .overview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; }
+  .overview-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 22px 20px;
+    box-shadow: var(--shadow); transition: box-shadow 0.2s, transform 0.2s;
+    position: relative; overflow: hidden;
+  }
+  .overview-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  }
+  .overview-card:nth-child(1)::before { background: #2a5298; }
+  .overview-card:nth-child(2)::before { background: #2e7d57; }
+  .overview-card:nth-child(3)::before { background: #7d4e2e; }
+  .overview-card:nth-child(4)::before { background: #2e5d7d; }
+  .overview-card:nth-child(5)::before { background: #7d2e6e; }
+  .overview-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-1px); }
+  .overview-card .sys-name { font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: 6px; }
+  .overview-card .sys-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5; }
+  .overview-card .sub-modules { list-style: none; margin-bottom: 14px; }
+  .overview-card .sub-modules li {
+    font-size: 13px; color: var(--text-muted); padding: 2px 0 2px 14px; position: relative;
+  }
+  .overview-card .sub-modules li::before { content: '·'; position: absolute; left: 2px; color: var(--accent); }
+  .status-tag {
+    display: inline-block; font-size: 12px; font-weight: 600;
+    padding: 3px 10px; border-radius: 20px; letter-spacing: 0.02em;
+  }
+  .status-not-started { background: #f0f2f5; color: #5a6778; }
+  .status-in-progress { background: #e8f2fd; color: #1a5fa6; }
+  .status-to-fill { background: var(--warning-bg); color: var(--warning); }
+  .status-done { background: var(--success-bg); color: var(--success); }
+
+  /* ── Accordion ── */
+  .accordion-list { display: flex; flex-direction: column; gap: 12px; }
+  .accordion-item { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow); overflow: hidden; }
+  .accordion-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; cursor: pointer; user-select: none; transition: background 0.15s; }
+  .accordion-header:hover { background: #fafbfc; }
+  .accordion-header-left { display: flex; align-items: center; gap: 14px; }
+  .acc-sys-num { width: 30px; height: 30px; border-radius: 6px; background: var(--primary); color: white; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .acc-sys-name { font-size: 16px; font-weight: 700; color: var(--primary); }
+  .acc-sys-desc { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+  .accordion-chevron { width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; transition: transform 0.25s; color: var(--text-light); flex-shrink: 0; }
+  .accordion-chevron svg { display: block; }
+  .accordion-item.open .accordion-chevron { transform: rotate(180deg); }
+  .accordion-body { display: none; padding: 0 24px 24px; border-top: 1px solid var(--border); }
+  .accordion-item.open .accordion-body { display: block; }
+  .acc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 20px; }
+  .acc-cell { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+  .acc-cell-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 8px; }
+  .acc-cell-content { font-size: 14px; color: var(--text); line-height: 1.65; }
+  .acc-cell-content ul { list-style: none; padding: 0; }
+  .acc-cell-content ul li { padding: 2px 0 2px 14px; position: relative; color: var(--text-muted); }
+  .acc-cell-content ul li::before { content: '·'; position: absolute; left: 2px; color: var(--accent); font-weight: bold; }
+  .acc-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); align-items: center; }
+  .acc-meta-item { font-size: 13px; color: var(--text-muted); }
+  .acc-meta-item strong { color: var(--text); font-weight: 600; }
+
+  /* ── Roadmap ── */
+  .roadmap { display: flex; flex-direction: column; position: relative; padding-left: 32px; }
+  .roadmap::before { content: ''; position: absolute; left: 11px; top: 24px; bottom: 24px; width: 2px; background: linear-gradient(to bottom, var(--primary), var(--border)); }
+  .roadmap-item { position: relative; padding: 0 0 28px 24px; }
+  .roadmap-dot { position: absolute; left: -32px; top: 4px; width: 22px; height: 22px; border-radius: 50%; background: var(--card); border: 2px solid var(--primary-light); display: flex; align-items: center; justify-content: center; z-index: 1; }
+  .roadmap-dot.active { background: var(--accent); border-color: var(--accent); }
+  .roadmap-dot-inner { width: 8px; height: 8px; border-radius: 50%; background: var(--primary-light); }
+  .roadmap-dot.active .roadmap-dot-inner { background: white; }
+  .roadmap-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px 24px; box-shadow: var(--shadow); }
+  .roadmap-card.active-card { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(46,125,154,0.08), var(--shadow); }
+  .roadmap-version { font-size: 13px; font-weight: 700; color: var(--accent); letter-spacing: 0.06em; margin-bottom: 6px; }
+  .roadmap-title { font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: 12px; }
+  .roadmap-items { display: flex; flex-wrap: wrap; gap: 6px; }
+  .roadmap-tag { background: var(--neutral-bg); border: 1px solid var(--border); color: var(--text-muted); font-size: 13px; padding: 3px 10px; border-radius: 4px; }
+  .roadmap-card.active-card .roadmap-tag { background: var(--accent-light); border-color: #b8dce8; color: var(--accent); }
+
+  /* ── System Config ── */
+  .config-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); box-shadow: var(--shadow); overflow: hidden;
+  }
+  .config-header {
+    background: #0f2440; color: white; padding: 16px 24px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  }
+  .config-header-left { display: flex; align-items: center; gap: 12px; }
+  .config-title { font-size: 15px; font-weight: 600; }
+  .config-subtitle { font-size: 13px; color: rgba(255,255,255,0.55); margin-top: 1px; }
+  .conn-status {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 500; padding: 5px 14px;
+    border-radius: 20px; border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.6);
+    white-space: nowrap;
+  }
+  .conn-status.connected { background: rgba(46,125,86,0.25); border-color: rgba(46,125,86,0.4); color: #6ee09b; }
+  .conn-status.error { background: rgba(192,57,43,0.2); border-color: rgba(192,57,43,0.4); color: #f08080; }
+  .conn-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+  .config-body { padding: 20px 24px; }
+  .config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .config-warning {
+    background: #fffbeb; border: 1px solid #f0d060; border-radius: var(--radius);
+    padding: 12px 16px; font-size: 13px; color: #7d6020; line-height: 1.6;
+    margin-top: 16px;
+  }
+  .config-warning strong { color: #5a4010; }
+
+  /* ── Forms ── */
+  .templates-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px; align-items: start; }
+  .form-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow); overflow: hidden; }
+  .form-card-header { background: var(--primary); color: white; padding: 16px 22px; }
+  .form-card-title { font-size: 15px; font-weight: 600; }
+  .form-card-subtitle { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 3px; }
+  .form-body { padding: 20px 22px; }
+  .form-group { margin-bottom: 16px; }
+  .form-group:last-of-type { margin-bottom: 0; }
+  .form-label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 5px; }
+  .form-label .req { color: var(--danger-color); margin-left: 2px; }
+  .form-input, .form-textarea, .form-select {
+    width: 100%; border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 9px 12px; font-size: 14px; font-family: inherit; color: var(--text);
+    background: #fafbfc; transition: border-color 0.15s, box-shadow 0.15s; resize: vertical;
+  }
+  .form-input:focus, .form-textarea:focus, .form-select:focus {
+    outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(46,125,154,0.12); background: white;
+  }
+  .form-input.error, .form-textarea.error { border-color: var(--danger-color); box-shadow: 0 0 0 3px rgba(192,57,43,0.1); }
+  .form-textarea { min-height: 84px; }
+  .form-footer { padding: 14px 22px 18px; border-top: 1px solid var(--border); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .submit-btn {
+    background: var(--primary); color: white; border: none; border-radius: var(--radius);
+    padding: 10px 22px; font-size: 14px; font-weight: 600; font-family: inherit;
+    cursor: pointer; transition: background 0.15s; white-space: nowrap;
+  }
+  .submit-btn:hover { background: var(--primary-light); }
+  .submit-btn:disabled { background: #a0aab4; cursor: not-allowed; }
+  .form-error-msg { font-size: 13px; color: var(--danger-color); display: none; }
+  .form-error-msg.visible { display: block; }
+
+  /* ── Library top bar ── */
+  .lib-topbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+  .lib-topbar-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .lib-btn {
+    background: var(--card); border: 1px solid var(--border); color: var(--text-muted);
+    font-size: 13px; font-weight: 500; padding: 7px 16px; border-radius: var(--radius);
+    cursor: pointer; font-family: inherit; transition: all 0.15s; white-space: nowrap;
+  }
+  .lib-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .lib-btn.primary { background: var(--primary); border-color: var(--primary); color: white; }
+  .lib-btn.primary:hover { background: var(--primary-light); }
+
+  /* ── Library Tabs ── */
+  .lib-tabs { display: flex; border-bottom: 2px solid var(--border); margin-bottom: 20px; }
+  .lib-tab { padding: 10px 22px; font-size: 14px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: color 0.15s, border-color 0.15s; white-space: nowrap; user-select: none; }
+  .lib-tab:hover { color: var(--primary); }
+  .lib-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+  .lib-tab-count { display: inline-block; background: var(--neutral-bg); color: var(--text-muted); font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 10px; margin-left: 7px; }
+  .lib-tab.active .lib-tab-count { background: var(--accent-light); color: var(--accent); }
+  .lib-panel { display: none; }
+  .lib-panel.active { display: block; }
+
+  /* ── Library Table ── */
+  .lib-table-wrap { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow); overflow-x: auto; }
+  .lib-empty { padding: 56px 24px; text-align: center; color: var(--text-light); font-size: 14px; }
+  .lib-table { width: 100%; border-collapse: collapse; min-width: 700px; }
+  .lib-table th { background: var(--primary); color: rgba(255,255,255,0.85); font-size: 13px; font-weight: 600; padding: 11px 16px; text-align: left; white-space: nowrap; }
+  .lib-table td { padding: 11px 16px; font-size: 14px; border-top: 1px solid var(--border); color: var(--text); vertical-align: top; }
+  .lib-table tr:hover td { background: #fafbfc; }
+  .lib-table td.muted { color: var(--text-muted); font-size: 13px; }
+  .lib-actions { display: flex; gap: 6px; white-space: nowrap; }
+  .lib-action-btn { background: none; border: 1px solid var(--border); color: var(--text-muted); font-size: 12px; padding: 4px 11px; border-radius: 4px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+  .lib-action-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .lib-action-btn.del:hover { border-color: var(--danger-color); color: var(--danger-color); }
+
+  /* ── Draft banner ── */
+  .draft-banner {
+    background: #fff9ec; border: 1px solid #f0d47a; border-radius: var(--radius);
+    padding: 12px 16px; margin-bottom: 16px; font-size: 13px; color: #7d6020;
+    display: none; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .draft-banner.visible { display: flex; }
+  .draft-banner-actions { display: flex; gap: 8px; }
+  .draft-btn { background: none; border: 1px solid #c8a030; color: #7d6020; font-size: 12px; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-family: inherit; transition: all 0.15s; white-space: nowrap; }
+  .draft-btn:hover { background: #fff3cc; }
+
+  /* ── Detail Panel ── */
+  .detail-panel-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 300; display: none;
+  }
+  .detail-panel-overlay.open { display: block; }
+  .detail-panel {
+    position: fixed; top: 0; right: -480px; width: 480px; max-width: 96vw; height: 100%;
+    background: var(--card); box-shadow: -4px 0 32px rgba(0,0,0,0.15);
+    display: flex; flex-direction: column; z-index: 301;
+    transition: right 0.28s cubic-bezier(0.4,0,0.2,1);
+  }
+  .detail-panel.open { right: 0; }
+  .detail-panel-header {
+    background: var(--primary); color: white; padding: 16px 22px;
+    display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+  }
+  .detail-panel-title { font-size: 15px; font-weight: 600; }
+  .detail-panel-mode { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+  .detail-panel-close { background: none; border: none; color: rgba(255,255,255,0.7); font-size: 22px; cursor: pointer; line-height: 1; padding: 0 2px; }
+  .detail-panel-close:hover { color: white; }
+  .detail-panel-body { padding: 20px 22px; overflow-y: auto; flex: 1; }
+  .detail-panel-footer { padding: 14px 22px; border-top: 1px solid var(--border); display: flex; gap: 10px; flex-shrink: 0; }
+  .detail-field { padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .detail-field:last-child { border-bottom: none; }
+  .detail-field-key { font-size: 12px; font-weight: 700; color: var(--accent); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .detail-field-val { font-size: 14px; color: var(--text); white-space: pre-wrap; line-height: 1.65; }
+  .detail-field-val.empty { color: var(--text-light); font-style: italic; }
+  .detail-edit-group { margin-bottom: 16px; }
+  .detail-edit-group:last-of-type { margin-bottom: 0; }
+  .detail-edit-label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 5px; }
+  .detail-edit-label .req { color: var(--danger-color); margin-left: 2px; }
+  .save-btn { background: var(--success); color: white; border: none; border-radius: var(--radius); padding: 10px 22px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 0.15s; }
+  .save-btn:hover { background: #236644; }
+  .save-btn:disabled { background: #a0aab4; cursor: not-allowed; }
+  .cancel-btn { background: none; border: 1px solid var(--border); color: var(--text-muted); border-radius: var(--radius); padding: 10px 18px; font-size: 14px; font-family: inherit; cursor: pointer; transition: all 0.15s; }
+  .cancel-btn:hover { border-color: var(--text-muted); color: var(--text); }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed; bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #1a2332; color: white; font-size: 14px;
+    padding: 12px 22px; border-radius: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    opacity: 0; transition: opacity 0.2s, transform 0.2s;
+    z-index: 9999; pointer-events: none; white-space: nowrap; max-width: 90vw;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.success { background: #1e5738; }
+  .toast.error { background: #7a1f1f; }
+
+  /* ── Progress Board ── */
+  .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .filter-btn { background: var(--card); border: 1px solid var(--border); color: var(--text-muted); font-size: 13px; font-weight: 500; padding: 7px 18px; border-radius: 20px; cursor: pointer; transition: all 0.15s; }
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-btn.active { background: var(--primary); border-color: var(--primary); color: white; }
+  .progress-table { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow); overflow: hidden; }
+  .progress-table-header { display: grid; grid-template-columns: 1fr 110px 75px 100px 1fr; background: var(--primary); color: rgba(255,255,255,0.85); font-size: 13px; font-weight: 600; letter-spacing: 0.03em; }
+  .progress-table-header .th, .progress-row .td { padding: 12px 16px; }
+  .progress-row { display: grid; grid-template-columns: 1fr 110px 75px 100px 1fr; border-top: 1px solid var(--border); transition: background 0.1s; font-size: 14px; }
+  .progress-row:hover { background: #fafbfc; }
+  .progress-row .td:first-child { font-weight: 500; }
+  .priority-high { color: #a02020; font-weight: 600; font-size: 13px; }
+  .priority-mid { color: #7d6b2e; font-weight: 600; font-size: 13px; }
+  .priority-low { color: var(--text-muted); font-size: 13px; }
+  .td-next { font-size: 13px; color: var(--text-muted); }
+  .td-owner { font-size: 13px; color: var(--text-muted); }
+
+  /* ── Outcome Entries ── */
+  .outcome-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+  .outcome-btn {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 18px 20px; cursor: pointer; text-decoration: none;
+    transition: box-shadow 0.2s, transform 0.15s, border-color 0.15s; box-shadow: var(--shadow);
+  }
+  .outcome-btn:hover { box-shadow: var(--shadow-hover); transform: translateY(-1px); border-color: var(--accent); }
+  .outcome-btn-icon { width: 34px; height: 34px; background: var(--accent-light); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
+  .outcome-btn-icon svg { display: block; }
+  .outcome-btn-name { font-size: 14px; font-weight: 600; color: var(--primary); }
+  .outcome-btn-note { font-size: 12px; color: var(--text-light); }
+
+  /* ── Cockpit ── */
+  .cockpit-bg { background: linear-gradient(135deg, #0f2440 0%, #1a3a5c 100%); }
+  .cockpit-inner { max-width: var(--max-width); margin: 0 auto; padding: 32px 24px 36px; }
+  .cockpit-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+  .cockpit-title { font-size: 18px; font-weight: 700; color: white; }
+  .cockpit-sub { font-size: 13px; color: rgba(255,255,255,0.55); margin-top: 3px; }
+  .cockpit-stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 28px; }
+  .cockpit-stat { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-lg); padding: 18px 20px; transition: background 0.2s; }
+  .cockpit-stat:hover { background: rgba(255,255,255,0.11); }
+  .cockpit-stat-num { font-size: 32px; font-weight: 700; color: white; line-height: 1; margin-bottom: 8px; }
+  .cockpit-stat-label { font-size: 13px; color: rgba(255,255,255,0.6); }
+  .cockpit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .cockpit-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-lg); padding: 18px 20px; }
+  .cockpit-card-title { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px; }
+  .cockpit-list { list-style: none; }
+  .cockpit-list li { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.07); font-size: 13px; color: rgba(255,255,255,0.8); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .cockpit-list li:last-child { border-bottom: none; }
+  .cockpit-type-badge { font-size: 11px; padding: 2px 8px; border-radius: 10px; background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6); white-space: nowrap; flex-shrink: 0; }
+  .cockpit-empty { font-size: 13px; color: rgba(255,255,255,0.35); font-style: italic; padding: 8px 0; }
+  .cockpit-pending-row { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.07); }
+  .cockpit-pending-row:last-child { border-bottom: none; }
+  .cockpit-pending-title { font-size: 13px; color: rgba(255,255,255,0.85); }
+  .cockpit-pending-meta { font-size: 12px; color: rgba(255,255,255,0.45); margin-top: 3px; }
+
+  /* ── Dashboard Cards ── */
+  .dashboard-form-wrap { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 24px; }
+  .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+  .dashboard-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow); transition: box-shadow 0.2s, transform 0.15s; position: relative; overflow: hidden; }
+  .dashboard-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-1px); }
+  .dashboard-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .dashboard-card.cat-满意度调研::before { background: #e67e22; }
+  .dashboard-card.cat-成绩分析::before { background: #2980b9; }
+  .dashboard-card.cat-通过率分析::before { background: #27ae60; }
+  .dashboard-card.cat-续费率分析::before { background: #8e44ad; }
+  .dashboard-card.cat-退费率分析::before { background: #e74c3c; }
+  .dashboard-card.cat-主讲分析::before { background: #16a085; }
+  .dashboard-card.cat-课程分析::before { background: #2c3e50; }
+  .dashboard-card.cat-市场分析::before { background: #d35400; }
+  .dashboard-card.cat-其他::before { background: #7f8c8d; }
+  .dashboard-cat-badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 10px; margin-bottom: 10px; }
+  .cbg-满意度调研 { background: #fef0e0; color: #c86020; }
+  .cbg-成绩分析 { background: #e3f0fa; color: #1a5f9a; }
+  .cbg-通过率分析 { background: #e6f7ed; color: #1a7a48; }
+  .cbg-续费率分析 { background: #f3e8fa; color: #6e2fa6; }
+  .cbg-退费率分析 { background: #fde8e6; color: #b03020; }
+  .cbg-主讲分析 { background: #e0f5f0; color: #0e7060; }
+  .cbg-课程分析 { background: #e8eaec; color: #2c3e50; }
+  .cbg-市场分析 { background: #fde8d8; color: #a63010; }
+  .cbg-其他 { background: #f0f2f5; color: #5a6778; }
+  .dashboard-card-title { font-size: 15px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+  .dashboard-card-desc { font-size: 13px; color: var(--text-muted); line-height: 1.55; margin-bottom: 10px; }
+  .dashboard-card-meta { font-size: 12px; color: var(--text-light); margin-bottom: 12px; }
+  .dashboard-card-footer { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .dashboard-link-btn { background: var(--accent); color: white; border: none; border-radius: var(--radius); padding: 5px 13px; font-size: 12px; font-family: inherit; cursor: pointer; text-decoration: none; display: inline-block; transition: background 0.15s; }
+  .dashboard-link-btn:hover { background: #236780; }
+  .insight-count-badge { background: var(--accent-light); color: var(--accent); font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 10px; }
+  .dashboard-empty { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 60px 24px; text-align: center; color: var(--text-light); font-size: 14px; box-shadow: var(--shadow); }
+
+  /* ── Insight Cards ── */
+  .insight-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+  .insight-search { border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 14px; font-size: 14px; font-family: inherit; color: var(--text); background: var(--card); width: 260px; outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
+  .insight-search:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(46,125,154,0.12); }
+  .insight-status-tabs { display: flex; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; flex-wrap: wrap; }
+  .insight-status-tab { padding: 8px 16px; font-size: 13px; font-weight: 500; color: var(--text-muted); cursor: pointer; background: var(--card); border: none; border-right: 1px solid var(--border); font-family: inherit; transition: background 0.15s, color 0.15s; white-space: nowrap; }
+  .insight-status-tab:last-child { border-right: none; }
+  .insight-status-tab:hover { background: #f5f6f8; color: var(--primary); }
+  .insight-status-tab.active { background: var(--primary); color: white; }
+  .insight-grid { display: flex; flex-direction: column; gap: 12px; }
+  .insight-card { background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; box-shadow: var(--shadow); transition: box-shadow 0.15s; }
+  .insight-card:hover { box-shadow: var(--shadow-hover); }
+  .insight-card.s-待分析 { border-left-color: #f39c12; }
+  .insight-card.s-待执行 { border-left-color: #2980b9; }
+  .insight-card.s-执行中 { border-left-color: #8e44ad; }
+  .insight-card.s-已验证 { border-left-color: #27ae60; }
+  .insight-card.s-已关闭 { border-left-color: #bdc3c7; }
+  .insight-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+  .insight-card-title { font-size: 15px; font-weight: 700; color: var(--primary); }
+  .insight-card-meta { font-size: 12px; color: var(--text-light); margin-top: 3px; }
+  .insight-status-badge { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 10px; white-space: nowrap; flex-shrink: 0; }
+  .badge-待分析 { background: #fef5e0; color: #c87020; }
+  .badge-待执行 { background: #e3effa; color: #1a5090; }
+  .badge-执行中 { background: #f3e8fa; color: #6e2fa6; }
+  .badge-已验证 { background: #e6f7ed; color: #1a7a48; }
+  .badge-已关闭 { background: #f0f2f5; color: #5a6778; }
+  .insight-section { margin-bottom: 10px; }
+  .insight-section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 4px; }
+  .insight-section-text { font-size: 13px; color: var(--text); line-height: 1.55; white-space: pre-wrap; }
+  .insight-card-footer { display: flex; gap: 8px; align-items: center; padding-top: 12px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+  .insight-action-btn { background: none; border: 1px solid var(--border); color: var(--text-muted); font-size: 12px; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+  .insight-action-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .insight-action-btn.del:hover { border-color: var(--danger-color); color: var(--danger-color); }
+  .insight-empty { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 60px 24px; text-align: center; color: var(--text-light); font-size: 14px; box-shadow: var(--shadow); }
+
+  /* ── Custom Confirm Dialog ── */
+  .confirm-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 500; display: none; align-items: center; justify-content: center; }
+  .confirm-overlay.open { display: flex; }
+  .confirm-dialog { background: var(--card); border-radius: var(--radius-lg); box-shadow: 0 8px 32px rgba(0,0,0,0.2); padding: 28px 28px 22px; max-width: 380px; width: 90%; }
+  .confirm-dialog-title { font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+  .confirm-dialog-msg { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 22px; }
+  .confirm-dialog-actions { display: flex; gap: 10px; justify-content: flex-end; }
+  .confirm-ok-btn { background: var(--danger-color); color: white; border: none; border-radius: var(--radius); padding: 9px 20px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 0.15s; }
+  .confirm-ok-btn:hover { background: #a93226; }
+  .confirm-cancel-btn { background: none; border: 1px solid var(--border); color: var(--text-muted); border-radius: var(--radius); padding: 9px 16px; font-size: 14px; font-family: inherit; cursor: pointer; transition: all 0.15s; }
+  .confirm-cancel-btn:hover { border-color: var(--text-muted); color: var(--text); }
+
+  /* ── Footer ── */
+  footer { background: var(--primary); color: rgba(255,255,255,0.5); text-align: center; font-size: 13px; padding: 20px 24px; margin-top: 40px; }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .cockpit-stats { grid-template-columns: repeat(3, 1fr); }
+    .cockpit-grid { grid-template-columns: 1fr; }
+    .hero { padding: 36px 16px 32px; }
+    .section { padding: 32px 16px; }
+    .overview-grid { grid-template-columns: 1fr 1fr; }
+    .acc-grid { grid-template-columns: 1fr; }
+    .config-grid { grid-template-columns: 1fr; }
+    .templates-grid { grid-template-columns: 1fr; }
+    .progress-table-header, .progress-row { grid-template-columns: 1fr 100px 65px; }
+    .progress-table-header .th:nth-child(4), .progress-table-header .th:nth-child(5),
+    .progress-row .td:nth-child(4), .progress-row .td:nth-child(5) { display: none; }
+    .outcome-grid { grid-template-columns: 1fr 1fr; }
+    .accordion-header { padding: 14px 16px; }
+    .accordion-body { padding: 0 16px 20px; }
+    .lib-topbar { flex-direction: column; align-items: flex-start; }
+  }
+  @media (max-width: 480px) {
+    .cockpit-stats { grid-template-columns: repeat(2, 1fr); }
+    .insight-search { width: 100%; }
+    .overview-grid, .outcome-grid { grid-template-columns: 1fr; }
+    .roadmap { padding-left: 24px; }
+    .detail-panel { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Navigation ── -->
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <div class="nav-brand">教学大脑</div>
+    <a href="#cockpit">驾驶舱</a>
+    <a href="#overview">总览</a>
+    <a href="#details">系统详情</a>
+    <a href="#roadmap">路线图</a>
+    <a href="#config">系统配置</a>
+    <a href="#templates">录入模板</a>
+    <a href="#library">内容库</a>
+    <a href="#dashboard">数据看板</a>
+    <a href="#insight">洞察中心</a>
+    <a href="#progress">进度看板</a>
+    <a href="#outcomes">成果入口</a>
+  </div>
+</nav>
+
+<!-- ── Hero ── -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">内部建设文件 · 持续更新</div>
+    <h1>教学大脑搭建规划</h1>
+    <p class="hero-sub">从个人经验到组织能力的系统沉淀方案</p>
+    <div class="definition-box">
+      教学大脑不是资料库，而是连接课程内容、课堂执行、教师成长、家长服务、考试结果、经营数据与成果传播的组织能力系统。
+    </div>
+    <div class="formula-box">
+      <div class="label">核心公式</div>
+      <div class="formula">
+        教学大脑 = 内容标准化 + 教学过程沉淀 + 教师能力复制 + 学员结果追踪 + 经营数据反馈 + 教学成果外化
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ── Cockpit ── -->
+<div id="cockpit" class="cockpit-bg" style="scroll-margin-top:48px;">
+  <div class="cockpit-inner">
+    <div class="cockpit-header">
+      <div>
+        <div class="cockpit-title">01 &nbsp;教学运营驾驶舱</div>
+        <div class="cockpit-sub">知识沉淀 · 数据看板 · 洞察跟踪 · 实时汇总</div>
+      </div>
+      <button onclick="refreshAll()" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.8);font-size:13px;padding:8px 16px;border-radius:var(--radius);cursor:pointer;font-family:inherit;transition:background 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.14)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">刷新数据</button>
+    </div>
+    <div class="cockpit-stats">
+      <div class="cockpit-stat"><div class="cockpit-stat-num" id="stat-knowledge">—</div><div class="cockpit-stat-label">知识卡</div></div>
+      <div class="cockpit-stat"><div class="cockpit-stat-num" id="stat-case">—</div><div class="cockpit-stat-label">教学案例</div></div>
+      <div class="cockpit-stat"><div class="cockpit-stat-num" id="stat-result">—</div><div class="cockpit-stat-label">成果案例</div></div>
+      <div class="cockpit-stat"><div class="cockpit-stat-num" id="stat-dashboard">—</div><div class="cockpit-stat-label">数据看板</div></div>
+      <div class="cockpit-stat"><div class="cockpit-stat-num" id="stat-insight">—</div><div class="cockpit-stat-label">洞察条目</div></div>
+    </div>
+    <div class="cockpit-grid">
+      <div class="cockpit-card">
+        <div class="cockpit-card-title">最近录入（各类最新5条）</div>
+        <ul class="cockpit-list" id="cockpit-recent">
+          <li><span class="cockpit-empty">暂无数据，请先连接 Supabase</span></li>
+        </ul>
+      </div>
+      <div class="cockpit-card">
+        <div class="cockpit-card-title">待处理洞察</div>
+        <div id="cockpit-pending"><div class="cockpit-empty">暂无待分析 / 待执行洞察</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Overview ── -->
+<div class="section" id="overview">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2 class="section-title">五大系统总览</h2>
+  </div>
+  <div class="overview-grid">
+    <div class="overview-card">
+      <div class="sys-name">内容生产系统</div>
+      <div class="sys-desc">沉淀课程标准，让优秀经验可复制</div>
+      <ul class="sub-modules">
+        <li>课程大脑</li><li>教研大脑</li><li>教学大脑</li>
+        <li>教师培训大脑</li><li>AI 助手大脑</li>
+      </ul>
+      <span class="status-tag status-in-progress">进行中</span>
+    </div>
+    <div class="overview-card">
+      <div class="sys-name">服务与案例系统</div>
+      <div class="sys-desc">遇到问题时有案例可查、有话术可用</div>
+      <ul class="sub-modules">
+        <li>家长沟通大脑</li><li>教学案例大脑</li><li>满意度调研分析</li>
+      </ul>
+      <span class="status-tag status-not-started">未开始</span>
+    </div>
+    <div class="overview-card">
+      <div class="sys-name">考试结果系统</div>
+      <div class="sys-desc">用真实考试成绩验证教学效果</div>
+      <ul class="sub-modules">
+        <li>剑桥实考成绩分析</li><li>实考通过率分析</li><li>高分实考案例沉淀</li>
+      </ul>
+      <span class="status-tag status-not-started">未开始</span>
+    </div>
+    <div class="overview-card">
+      <div class="sys-name">经营数据系统</div>
+      <div class="sys-desc">用数据反推教学质量与服务问题</div>
+      <ul class="sub-modules">
+        <li>退费率分析</li><li>续费率分析</li>
+        <li>主讲维度数据看板</li><li>课程维度数据看板</li>
+      </ul>
+      <span class="status-tag status-not-started">未开始</span>
+    </div>
+    <div class="overview-card">
+      <div class="sys-name">成果传播系统</div>
+      <div class="sys-desc">将教学成果外化为品牌资产</div>
+      <ul class="sub-modules">
+        <li>高分实考案例库</li><li>家长好评库</li><li>学生作品库</li>
+        <li>学生演讲展示视频库</li><li>宣传/海报/品牌案例库</li>
+      </ul>
+      <span class="status-tag status-not-started">未开始</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── Details ── -->
+<div class="section" id="details">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2 class="section-title">各系统详细说明</h2>
+  </div>
+  <div class="accordion-list">
+    <div class="accordion-item open">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-left">
+          <div class="acc-sys-num">一</div>
+          <div><div class="acc-sys-name">内容生产系统</div><div class="acc-sys-desc">让优秀课堂经验可以被标准化复制</div></div>
+        </div>
+        <div class="accordion-chevron"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="accordion-body">
+        <div class="acc-grid">
+          <div class="acc-cell"><div class="acc-cell-label">系统目标</div><div class="acc-cell-content">沉淀课程、教研、课堂教学和教师培训中的标准做法，让优秀经验可以被复制，新老师可以快速达到稳定水准。</div></div>
+          <div class="acc-cell"><div class="acc-cell-label">应沉淀的内容</div><div class="acc-cell-content"><ul><li>课程大纲 / 课件模板</li><li>课堂流程标准</li><li>阅读课标准流程</li><li>词汇教学四板斧</li><li>CCQ 设计原则</li><li>学生输出策略</li><li>教师培训 PPT</li><li>Trial 课培训资料</li><li>AI 备课助手提示词</li></ul></div></div>
+          <div class="acc-cell"><div class="acc-cell-label">典型使用场景</div><div class="acc-cell-content"><ul><li>新老师备课参考</li><li>教研统一标准</li><li>主讲老师优化课堂</li><li>主管做教师培训</li></ul></div></div>
+          <div class="acc-cell"><div class="acc-cell-label">下一步动作</div><div class="acc-cell-content">整理 Trial 课培训 PPT 和 FCE 课程体系，作为首批导入内容。</div></div>
+        </div>
+        <div class="acc-meta"><div class="acc-meta-item"><strong>优先级：</strong>高</div><div class="acc-meta-item"><strong>当前进度：</strong><span class="status-tag status-in-progress">进行中</span></div></div>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-left">
+          <div class="acc-sys-num">二</div>
+          <div><div class="acc-sys-name">服务与案例系统</div><div class="acc-sys-desc">遇到问题时有案例可查、有话术可用</div></div>
+        </div>
+        <div class="accordion-chevron"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="accordion-body">
+        <div class="acc-grid">
+          <div class="acc-cell"><div class="acc-cell-label">系统目标</div><div class="acc-cell-content">沉淀真实教学问题、家长沟通问题和解决方案，让团队遇到问题时有案例可查、有话术可用。</div></div>
+          <div class="acc-cell"><div class="acc-cell-label">应沉淀的内容</div><div class="acc-cell-content"><ul><li>家长沟通话术</li><li>投诉处理案例</li><li>续费沟通案例</li><li>学生不开口案例</li><li>单词背不住案例</li><li>课堂参与度低案例</li><li>满意度调研反馈</li><li>优秀老师处理案例</li></ul></div></div>
+          <div class="acc-cell"><div class="acc-cell-label">典型使用场景</div><div class="acc-cell-content"><ul><li>老师遇到课堂问题时查询</li><li>助教遇到家长问题时参考</li><li>主管复盘服务质量</li><li>团队培训案例讨论</li></ul></div></div>
+          <div class="acc-cell"><div class="acc-cell-label">下一步动作</div><div class="acc-cell-content">收集近期家长投诉及处理记录，整理为首批案例卡片。</div></div>
+        </div>
+        <div class="acc-meta"><div class="acc-meta-item"><strong>优先级：</strong>高</div><div class="acc-meta-item"><strong>当前进度：</strong><span class="status-tag status-not-started">未开始</span></div></div>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-left">
+          <div class="acc-sys-num">三</div>
+          <div><div class="acc-sys-name">考试结果系统</div><div class="acc-sys-desc">用真实考试成绩验证教学效果</div></div>
+        </div>
+        <div class="accordion-chevron"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="accordion-body">
+        <div class="acc-grid">
+          <div class="acc-cell"><div class="acc-cell-label">系统目标</div><div class="acc-cell-content">用真实考试结果验证教学效果，追踪不同课程、不同老师、不同学生群体的学习成果。</div></div>
+          <div class="acc-cell"><div class="acc-cell-label">应沉淀的内容</div><div class="acc-cell-content"><ul><li>KET / PET / FCE 成绩分析</li><li>剑桥实考通过率</li><li>高分学员案例</li><li>短期提分案例</li><li>不同班型成绩对比</li><li>不同主讲成绩对比</li></ul></div></div>
+          <div class="acc-cell"><div class="acc-cell-label">典型使用场景</div><div class="acc-cell-content"><ul><li>复盘课程效果</li><li>优化教学重点</li><li>制作续费材料</li><li>支持招生咨询</li></ul></div></div>
+          <div class="acc-cell"><div class="acc-cell-label">下一步动作</div><div class="acc-cell-content">汇总近两年剑桥实考成绩，建立基础数据表格。</div></div>
+        </div>
+        <div class="acc-meta"><div class="acc-meta-item"><strong>优先级：</strong>中</div><div class="acc-meta-item"><strong>当前进度：</strong><span class="status-tag status-not-started">未开始</span></div></div>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-left">
+          <div class="acc-sys-num">四</div>
+          <div><div class="acc-sys-name">经营数据系统</div><div class="acc-sys-desc">用数据反推教学质量与服务质量问题</div></div>
+        </div>
+        <div class="accordion-chevron"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="accordion-body">
+        <div class="acc-grid">
+          <div class="acc-cell"><div class="acc-cell-label">系统目标</div><div class="acc-cell-content">用关键经营数据反推教学质量、服务质量和课程设计问题，为管理决策提供量化依据。</div></div>
+          <div class="acc-cell"><div class="acc-cell-label">应沉淀的内容</div><div class="acc-cell-content"><ul><li>退费率 / 续费率</li><li>主讲维度数据看板</li><li>课程维度数据看板</li><li>班级满班率 / 出勤率</li><li>作业完成率</li><li>满意度分数</li></ul></div></div>
+          <div class="acc-cell"><div class="acc-cell-label">典型使用场景</div><div class="acc-cell-content"><ul><li>发现高风险班级</li><li>识别优秀主讲</li><li>判断课程产品是否需要优化</li><li>为管理决策提供依据</li></ul></div></div>
+          <div class="acc-cell"><div class="acc-cell-label">下一步动作</div><div class="acc-cell-content">梳理现有数据来源，确定退费率和续费率的统计口径与更新频率。</div></div>
+        </div>
+        <div class="acc-meta"><div class="acc-meta-item"><strong>优先级：</strong>中</div><div class="acc-meta-item"><strong>当前进度：</strong><span class="status-tag status-not-started">未开始</span></div></div>
+      </div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <div class="accordion-header-left">
+          <div class="acc-sys-num">五</div>
+          <div><div class="acc-sys-name">成果传播系统</div><div class="acc-sys-desc">将教学成果外化为家长和市场可感知的品牌资产</div></div>
+        </div>
+        <div class="accordion-chevron"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+      <div class="accordion-body">
+        <div class="acc-grid">
+          <div class="acc-cell"><div class="acc-cell-label">系统目标</div><div class="acc-cell-content">把教学成果外化为家长能看见、市场能感知、团队能复用的品牌资产，支持招生和续费工作。</div></div>
+          <div class="acc-cell"><div class="acc-cell-label">应沉淀的内容</div><div class="acc-cell-content"><ul><li>高分实考案例</li><li>家长好评截图</li><li>学生演讲 / Speaking 视频</li><li>学生作品展示</li><li>写作优秀范文</li><li>宣传视频素材</li><li>招生海报素材</li><li>学员成长故事</li></ul></div></div>
+          <div class="acc-cell"><div class="acc-cell-label">典型使用场景</div><div class="acc-cell-content"><ul><li>招生宣传</li><li>续费沟通</li><li>家长会展示</li><li>公众号案例</li><li>短视频宣传</li><li>教师成就展示</li></ul></div></div>
+          <div class="acc-cell"><div class="acc-cell-label">下一步动作</div><div class="acc-cell-content">整理现有高分案例和家长好评，建立基础素材库，并确认隐私授权情况。</div></div>
+        </div>
+        <div class="acc-meta"><div class="acc-meta-item"><strong>优先级：</strong>高</div><div class="acc-meta-item"><strong>当前进度：</strong><span class="status-tag status-not-started">未开始</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Roadmap ── -->
+<div class="section" id="roadmap">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <h2 class="section-title">建设路线图</h2>
+  </div>
+  <div class="roadmap">
+    <div class="roadmap-item">
+      <div class="roadmap-dot active"><div class="roadmap-dot-inner"></div></div>
+      <div class="roadmap-card active-card">
+        <div class="roadmap-version">Version 0.1 · 当前阶段</div>
+        <div class="roadmap-title">搭建总规划 HTML</div>
+        <div class="roadmap-items"><span class="roadmap-tag">完成总结构</span><span class="roadmap-tag">明确五大系统</span><span class="roadmap-tag">建立基础模板</span></div>
+      </div>
+    </div>
+    <div class="roadmap-item">
+      <div class="roadmap-dot"><div class="roadmap-dot-inner"></div></div>
+      <div class="roadmap-card">
+        <div class="roadmap-version">Version 0.2</div>
+        <div class="roadmap-title">建立三大优先模块</div>
+        <div class="roadmap-items"><span class="roadmap-tag">教学案例库</span><span class="roadmap-tag">教师培训库</span><span class="roadmap-tag">成果传播库</span></div>
+      </div>
+    </div>
+    <div class="roadmap-item">
+      <div class="roadmap-dot"><div class="roadmap-dot-inner"></div></div>
+      <div class="roadmap-card">
+        <div class="roadmap-version">Version 0.3</div>
+        <div class="roadmap-title">导入首批资料</div>
+        <div class="roadmap-items"><span class="roadmap-tag">Trial 课培训 PPT</span><span class="roadmap-tag">FCE 课程体系</span><span class="roadmap-tag">单词四板斧</span><span class="roadmap-tag">最大化学生输出策略</span><span class="roadmap-tag">阅读课标准流程</span><span class="roadmap-tag">CCQ 设计原则</span><span class="roadmap-tag">家长沟通案例</span><span class="roadmap-tag">高分实考案例</span><span class="roadmap-tag">家长好评素材</span><span class="roadmap-tag">学生展示视频</span></div>
+      </div>
+    </div>
+    <div class="roadmap-item">
+      <div class="roadmap-dot"><div class="roadmap-dot-inner"></div></div>
+      <div class="roadmap-card">
+        <div class="roadmap-version">Version 0.4</div>
+        <div class="roadmap-title">建立数据看板</div>
+        <div class="roadmap-items"><span class="roadmap-tag">满意度调研</span><span class="roadmap-tag">实考成绩</span><span class="roadmap-tag">通过率</span><span class="roadmap-tag">退费率</span><span class="roadmap-tag">续费率</span><span class="roadmap-tag">主讲维度数据</span><span class="roadmap-tag">课程维度数据</span></div>
+      </div>
+    </div>
+    <div class="roadmap-item">
+      <div class="roadmap-dot"><div class="roadmap-dot-inner"></div></div>
+      <div class="roadmap-card">
+        <div class="roadmap-version">Version 1.0</div>
+        <div class="roadmap-title">接入 AI 检索</div>
+        <div class="roadmap-items"><span class="roadmap-tag">老师可以直接提问</span><span class="roadmap-tag">AI 基于内部知识库回答</span><span class="roadmap-tag">新老师 AI 培训助手</span><span class="roadmap-tag">主管 AI 复盘助手</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── System Config ── -->
+<div class="section" id="config">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <h2 class="section-title">系统配置</h2>
+  </div>
+  <div class="config-card">
+    <div class="config-header">
+      <div class="config-header-left">
+        <div>
+          <div class="config-title">Supabase 数据库连接</div>
+          <div class="config-subtitle">配置后，内容录入将存储到 Supabase，支持多端访问与长期维护</div>
+        </div>
+      </div>
+      <div class="conn-status" id="conn-status">
+        <span class="conn-dot"></span><span id="conn-status-text">未连接</span>
+      </div>
+    </div>
+    <div class="config-body">
+      <div class="config-grid">
+        <div class="form-group">
+          <label class="form-label">Supabase URL</label>
+          <input class="form-input" id="sb-url" type="url" placeholder="https://xxxxxxxxxxxx.supabase.co">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Supabase Anon Key</label>
+          <input class="form-input" id="sb-key" type="text" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <button class="submit-btn" onclick="connectSupabase()">连接 Supabase</button>
+        <span id="conn-err" style="font-size:13px;color:var(--danger-color);display:none;"></span>
+      </div>
+      <div class="config-warning">
+        <strong>安全提醒：</strong>当前页面使用 Supabase anon key 连接数据库。正式团队使用前，请在 Supabase 后台配置 Row Level Security、访问权限和登录认证，避免数据被未授权访问。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Templates ── -->
+<div class="section" id="templates">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <h2 class="section-title">内容录入模板</h2>
+  </div>
+
+  <!-- Draft banners -->
+  <div class="draft-banner" id="draft-k">
+    <span>检测到本地暂存的知识卡草稿（网络异常时保存）</span>
+    <div class="draft-banner-actions">
+      <button class="draft-btn" onclick="restoreDraft('knowledge')">恢复草稿</button>
+      <button class="draft-btn" onclick="clearDraft('knowledge')">丢弃草稿</button>
+    </div>
+  </div>
+  <div class="draft-banner" id="draft-c">
+    <span>检测到本地暂存的教学案例卡草稿（网络异常时保存）</span>
+    <div class="draft-banner-actions">
+      <button class="draft-btn" onclick="restoreDraft('case')">恢复草稿</button>
+      <button class="draft-btn" onclick="clearDraft('case')">丢弃草稿</button>
+    </div>
+  </div>
+  <div class="draft-banner" id="draft-r">
+    <span>检测到本地暂存的成果传播案例卡草稿（网络异常时保存）</span>
+    <div class="draft-banner-actions">
+      <button class="draft-btn" onclick="restoreDraft('result')">恢复草稿</button>
+      <button class="draft-btn" onclick="clearDraft('result')">丢弃草稿</button>
+    </div>
+  </div>
+
+  <div class="templates-grid">
+    <!-- 知识卡 -->
+    <div class="form-card">
+      <div class="form-card-header">
+        <div class="form-card-title">知识卡</div>
+        <div class="form-card-subtitle">必填：标题、适用场景、标准做法、填写人</div>
+      </div>
+      <div class="form-body">
+        <div class="form-group"><label class="form-label">标题<span class="req">*</span></label><input class="form-input" id="k-title" placeholder="例：词汇教学四板斧"></div>
+        <div class="form-group"><label class="form-label">适用场景<span class="req">*</span></label><input class="form-input" id="k-scenario" placeholder="例：词汇新授课堂，适用所有年级"></div>
+        <div class="form-group"><label class="form-label">核心原则</label><textarea class="form-textarea" id="k-core_principle" placeholder="1-3 条核心做法"></textarea></div>
+        <div class="form-group"><label class="form-label">标准做法<span class="req">*</span></label><textarea class="form-textarea" id="k-standard_practice" placeholder="具体操作步骤"></textarea></div>
+        <div class="form-group"><label class="form-label">示范案例</label><textarea class="form-textarea" id="k-example_case" placeholder="真实课堂示例"></textarea></div>
+        <div class="form-group"><label class="form-label">常见错误</label><textarea class="form-textarea" id="k-common_mistakes" placeholder="容易踩坑的地方"></textarea></div>
+        <div class="form-group"><label class="form-label">关联资料</label><input class="form-input" id="k-related_materials" placeholder="相关文件名或链接"></div>
+        <div class="form-group"><label class="form-label">填写人<span class="req">*</span></label><input class="form-input" id="k-submitter" placeholder="姓名"></div>
+      </div>
+      <div class="form-footer">
+        <button class="submit-btn" id="k-submit-btn" onclick="submitForm('knowledge')">提交到知识卡库</button>
+        <span class="form-error-msg" id="k-err">请补充必填字段</span>
+      </div>
+    </div>
+
+    <!-- 教学案例卡 -->
+    <div class="form-card">
+      <div class="form-card-header">
+        <div class="form-card-title">教学案例卡</div>
+        <div class="form-card-subtitle">必填：问题、解决方案、填写人</div>
+      </div>
+      <div class="form-body">
+        <div class="form-group"><label class="form-label">问题<span class="req">*</span></label><input class="form-input" id="c-problem" placeholder="例：学生上课全程不开口"></div>
+        <div class="form-group"><label class="form-label">学生背景</label><input class="form-input" id="c-student_background" placeholder="年级、级别、性格特点"></div>
+        <div class="form-group"><label class="form-label">课堂表现</label><textarea class="form-textarea" id="c-classroom_performance" placeholder="具体行为描述"></textarea></div>
+        <div class="form-group"><label class="form-label">原因分析</label><textarea class="form-textarea" id="c-cause_analysis" placeholder="背后原因推断"></textarea></div>
+        <div class="form-group"><label class="form-label">解决方案<span class="req">*</span></label><textarea class="form-textarea" id="c-solution" placeholder="采取了什么措施"></textarea></div>
+        <div class="form-group"><label class="form-label">执行过程</label><textarea class="form-textarea" id="c-implementation_process" placeholder="如何执行、持续多久"></textarea></div>
+        <div class="form-group"><label class="form-label">结果</label><textarea class="form-textarea" id="c-result" placeholder="最终效果"></textarea></div>
+        <div class="form-group"><label class="form-label">经验总结</label><textarea class="form-textarea" id="c-lesson_learned" placeholder="关键结论"></textarea></div>
+        <div class="form-group"><label class="form-label">可复用场景</label><input class="form-input" id="c-reusable_scenarios" placeholder="类似情况描述"></div>
+        <div class="form-group"><label class="form-label">填写人<span class="req">*</span></label><input class="form-input" id="c-submitter" placeholder="姓名"></div>
+      </div>
+      <div class="form-footer">
+        <button class="submit-btn" id="c-submit-btn" onclick="submitForm('case')">提交到教学案例库</button>
+        <span class="form-error-msg" id="c-err">请补充必填字段</span>
+      </div>
+    </div>
+
+    <!-- 成果传播案例卡 -->
+    <div class="form-card">
+      <div class="form-card-header">
+        <div class="form-card-title">成果传播案例卡</div>
+        <div class="form-card-subtitle">必填：学生背景、学习周期、主讲老师、起点水平、最终结果、关键教学动作、填写人</div>
+      </div>
+      <div class="form-body">
+        <div class="form-group"><label class="form-label">学生背景<span class="req">*</span></label><input class="form-input" id="r-student_background" placeholder="年龄、起点水平、学习目标"></div>
+        <div class="form-group"><label class="form-label">学习周期<span class="req">*</span></label><input class="form-input" id="r-learning_period" placeholder="例：2023.09—2024.06，共 120 课时"></div>
+        <div class="form-group"><label class="form-label">主讲老师<span class="req">*</span></label><input class="form-input" id="r-lead_teacher" placeholder="主讲姓名"></div>
+        <div class="form-group"><label class="form-label">起点水平<span class="req">*</span></label><input class="form-input" id="r-starting_level" placeholder="入学评估结果"></div>
+        <div class="form-group"><label class="form-label">最终结果<span class="req">*</span></label><input class="form-input" id="r-final_result" placeholder="成绩、通过证书等"></div>
+        <div class="form-group"><label class="form-label">关键教学动作<span class="req">*</span></label><textarea class="form-textarea" id="r-key_teaching_actions" placeholder="起到关键作用的方法"></textarea></div>
+        <div class="form-group"><label class="form-label">家长评价</label><textarea class="form-textarea" id="r-parent_feedback" placeholder="原话或摘要"></textarea></div>
+        <div class="form-group"><label class="form-label">可公开素材</label><input class="form-input" id="r-public_materials" placeholder="视频/截图/证书等"></div>
+        <div class="form-group"><label class="form-label">适合用于</label><input class="form-input" id="r-suitable_usage" placeholder="例：招生宣传、续费沟通"></div>
+        <div class="form-group"><label class="form-label">隐私授权状态</label>
+          <select class="form-select" id="r-privacy_authorization_status">
+            <option value="">请选择</option>
+            <option>已授权</option><option>待确认</option><option>不可公开</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">填写人<span class="req">*</span></label><input class="form-input" id="r-submitter" placeholder="姓名"></div>
+      </div>
+      <div class="form-footer">
+        <button class="submit-btn" id="r-submit-btn" onclick="submitForm('result')">提交到成果传播案例库</button>
+        <span class="form-error-msg" id="r-err">请补充必填字段</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Library ── -->
+<div class="section" id="library">
+  <div class="section-header">
+    <span class="section-num">07</span>
+    <h2 class="section-title">内容库汇总</h2>
+  </div>
+
+  <div class="lib-topbar">
+    <div class="lib-tabs" style="margin-bottom:0;border-bottom:none;">
+      <div class="lib-tab active" onclick="switchTab('knowledge', this)">知识卡库<span class="lib-tab-count" id="cnt-knowledge">0</span></div>
+      <div class="lib-tab" onclick="switchTab('case', this)">教学案例库<span class="lib-tab-count" id="cnt-case">0</span></div>
+      <div class="lib-tab" onclick="switchTab('result', this)">成果传播案例库<span class="lib-tab-count" id="cnt-result">0</span></div>
+    </div>
+    <div class="lib-topbar-actions">
+      <button class="lib-btn" onclick="refreshAll()">刷新数据</button>
+      <button class="lib-btn" onclick="exportJSON()">导出教学大脑 JSON</button>
+      <label class="lib-btn" style="cursor:pointer;">导入教学大脑 JSON<input type="file" accept=".json" style="display:none" onchange="importJSON(this)"></label>
+    </div>
+  </div>
+  <div style="border-bottom:2px solid var(--border);margin-bottom:20px;"></div>
+
+  <div class="lib-panel active" id="panel-knowledge">
+    <div class="lib-table-wrap">
+      <div class="lib-empty" id="empty-knowledge">暂无记录。请先连接 Supabase，填写上方表单后提交。</div>
+      <table class="lib-table" id="table-knowledge" style="display:none">
+        <thead><tr><th>标题</th><th>适用场景</th><th>填写人</th><th>更新时间</th><th>操作</th></tr></thead>
+        <tbody id="tbody-knowledge"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="lib-panel" id="panel-case">
+    <div class="lib-table-wrap">
+      <div class="lib-empty" id="empty-case">暂无记录。请先连接 Supabase，填写上方表单后提交。</div>
+      <table class="lib-table" id="table-case" style="display:none">
+        <thead><tr><th>问题</th><th>学生背景</th><th>解决方案</th><th>结果</th><th>填写人</th><th>更新时间</th><th>操作</th></tr></thead>
+        <tbody id="tbody-case"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="lib-panel" id="panel-result">
+    <div class="lib-table-wrap">
+      <div class="lib-empty" id="empty-result">暂无记录。请先连接 Supabase，填写上方表单后提交。</div>
+      <table class="lib-table" id="table-result" style="display:none">
+        <thead><tr><th>学生背景</th><th>最终结果</th><th>主讲老师</th><th>隐私授权</th><th>适合用于</th><th>更新时间</th><th>操作</th></tr></thead>
+        <tbody id="tbody-result"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── Dashboard Center ── -->
+<div class="section" id="dashboard">
+  <div class="section-header">
+    <span class="section-num">08</span>
+    <h2 class="section-title">数据看板中心</h2>
+  </div>
+
+  <div class="dashboard-form-wrap">
+    <div class="form-card-header">
+      <div class="form-card-title">登记数据看板</div>
+      <div class="form-card-subtitle">记录看板来源与链接，与洞察中心关联形成闭环</div>
+    </div>
+    <div class="form-body">
+      <div class="templates-grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));">
+        <div class="form-group"><label class="form-label">看板标题<span class="req">*</span></label><input class="form-input" id="d-title" placeholder="例：2024年Q1续费率分析"></div>
+        <div class="form-group"><label class="form-label">分类<span class="req">*</span></label>
+          <select class="form-select" id="d-category">
+            <option value="">请选择</option>
+            <option>满意度调研</option><option>成绩分析</option><option>通过率分析</option>
+            <option>续费率分析</option><option>退费率分析</option><option>主讲分析</option>
+            <option>课程分析</option><option>市场分析</option><option>其他</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">描述</label><textarea class="form-textarea" id="d-description" placeholder="看板内容简介" style="min-height:60px;"></textarea></div>
+        <div class="form-group"><label class="form-label">负责人</label><input class="form-input" id="d-owner" placeholder="姓名"></div>
+        <div class="form-group"><label class="form-label">数据来源</label><input class="form-input" id="d-data_source" placeholder="例：校管家 / 腾讯问卷 / Excel"></div>
+        <div class="form-group"><label class="form-label">看板链接</label><input class="form-input" id="d-dashboard_url" type="url" placeholder="https://..."></div>
+      </div>
+    </div>
+    <div class="form-footer">
+      <button class="submit-btn" id="d-submit-btn" onclick="submitDashboard()">添加看板</button>
+      <span class="form-error-msg" id="d-err">请补充必填字段</span>
+    </div>
+  </div>
+
+  <div id="dashboard-empty" class="dashboard-empty">暂无看板记录。请先连接 Supabase 并添加看板。</div>
+  <div class="dashboard-grid" id="dashboard-grid" style="display:none;"></div>
+</div>
+
+<!-- ── Insight Center ── -->
+<div class="section" id="insight">
+  <div class="section-header">
+    <span class="section-num">09</span>
+    <h2 class="section-title">洞察中心</h2>
+  </div>
+
+  <div class="dashboard-form-wrap">
+    <div class="form-card-header">
+      <div class="form-card-title">记录新洞察</div>
+      <div class="form-card-subtitle">从数据中提炼发现，沉淀行动与验证结果</div>
+    </div>
+    <div class="form-body">
+      <div class="templates-grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));">
+        <div class="form-group"><label class="form-label">洞察标题<span class="req">*</span></label><input class="form-input" id="i-title" placeholder="例：高年级续费率下降 10%"></div>
+        <div class="form-group"><label class="form-label">关联看板</label>
+          <select class="form-select" id="i-source_dashboard">
+            <option value="">不关联 / 独立洞察</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">发现（现象）<span class="req">*</span></label><textarea class="form-textarea" id="i-finding" placeholder="数据/观察到了什么？"></textarea></div>
+        <div class="form-group"><label class="form-label">根因分析</label><textarea class="form-textarea" id="i-root_cause" placeholder="可能的原因是什么？"></textarea></div>
+        <div class="form-group"><label class="form-label">行动方案</label><textarea class="form-textarea" id="i-action_plan" placeholder="计划采取什么行动？"></textarea></div>
+        <div class="form-group"><label class="form-label">状态</label>
+          <select class="form-select" id="i-status">
+            <option value="待分析">待分析</option><option value="待执行">待执行</option>
+            <option value="执行中">执行中</option><option value="已验证">已验证</option>
+            <option value="已关闭">已关闭</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">负责人</label><input class="form-input" id="i-owner" placeholder="姓名"></div>
+      </div>
+    </div>
+    <div class="form-footer">
+      <button class="submit-btn" id="i-submit-btn" onclick="submitInsight()">添加洞察</button>
+      <span class="form-error-msg" id="i-err">请补充必填字段</span>
+    </div>
+  </div>
+
+  <div class="insight-toolbar">
+    <div class="insight-status-tabs">
+      <button class="insight-status-tab active" onclick="filterInsight('全部',this)">全部</button>
+      <button class="insight-status-tab" onclick="filterInsight('待分析',this)">待分析</button>
+      <button class="insight-status-tab" onclick="filterInsight('待执行',this)">待执行</button>
+      <button class="insight-status-tab" onclick="filterInsight('执行中',this)">执行中</button>
+      <button class="insight-status-tab" onclick="filterInsight('已验证',this)">已验证</button>
+      <button class="insight-status-tab" onclick="filterInsight('已关闭',this)">已关闭</button>
+    </div>
+    <input class="insight-search" id="insight-search" placeholder="搜索洞察标题或内容…" oninput="renderInsightCards()">
+  </div>
+  <div class="insight-grid" id="insight-grid">
+    <div class="insight-empty" id="insight-empty">暂无洞察记录。请先连接 Supabase 并添加洞察。</div>
+  </div>
+</div>
+
+<!-- ── Progress Board ── -->
+<div class="section" id="progress">
+  <div class="section-header">
+    <span class="section-num">10</span>
+    <h2 class="section-title">建设进度看板</h2>
+  </div>
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterProgress('all', this)">全部</button>
+    <button class="filter-btn" onclick="filterProgress('not-started', this)">未开始</button>
+    <button class="filter-btn" onclick="filterProgress('in-progress', this)">进行中</button>
+    <button class="filter-btn" onclick="filterProgress('to-fill', this)">待补充</button>
+    <button class="filter-btn" onclick="filterProgress('done', this)">已完成</button>
+  </div>
+  <div class="progress-table">
+    <div class="progress-table-header">
+      <div class="th">项目名称</div><div class="th">当前状态</div><div class="th">优先级</div><div class="th">负责人</div><div class="th">下一步动作</div>
+    </div>
+    <div class="progress-row" data-status="in-progress"><div class="td">教学大脑总规划</div><div class="td"><span class="status-tag status-in-progress">进行中</span></div><div class="td"><span class="priority-high">高</span></div><div class="td td-owner">待分配</div><div class="td td-next">完善各系统详情，确认负责人分工</div></div>
+    <div class="progress-row" data-status="not-started"><div class="td">教学案例库</div><div class="td"><span class="status-tag status-not-started">未开始</span></div><div class="td"><span class="priority-high">高</span></div><div class="td td-owner">待分配</div><div class="td td-next">收集近期课堂问题案例，整理首批 10 个</div></div>
+    <div class="progress-row" data-status="not-started"><div class="td">教师培训库</div><div class="td"><span class="status-tag status-not-started">未开始</span></div><div class="td"><span class="priority-high">高</span></div><div class="td td-owner">待分配</div><div class="td td-next">整理 Trial 课 PPT 和 FCE 课程体系</div></div>
+    <div class="progress-row" data-status="not-started"><div class="td">成果传播库</div><div class="td"><span class="status-tag status-not-started">未开始</span></div><div class="td"><span class="priority-high">高</span></div><div class="td td-owner">待分配</div><div class="td td-next">整理现有高分案例和家长好评截图</div></div>
+    <div class="progress-row" data-status="not-started"><div class="td">家长沟通库</div><div class="td"><span class="status-tag status-not-started">未开始</span></div><div class="td"><span class="priority-mid">中</span></div><div class="td td-owner">待分配</div><div class="td td-next">汇总常见家长问题及处理话术</div></div>
+    <div class="progress-row" data-status="not-started"><div class="td">满意度调研分析</div><div class="td"><span class="status-tag status-not-started">未开始</span></div><div class="td"><span class="priority-mid">中</span></div><div class="td td-owner">待分配</div><div class="td td-next">设计调研问卷，确定采集周期</div></div>
+    <div class="progress-row" data-status="not-started"><div class="td">剑桥实考成绩分析</div><div class="td"><span class="status-tag status-not-started">未开始</span></div><div class="td"><span class="priority-mid">中</span></div><div class="td td-owner">待分配</div><div class="td td-next">汇总近两年 KET / PET / FCE 成绩数据</div></div>
+    <div class="progress-row" data-status="not-started"><div class="td">续费率数据看板</div><div class="td"><span class="status-tag status-not-started">未开始</span></div><div class="td"><span class="priority-mid">中</span></div><div class="td td-owner">待分配</div><div class="td td-next">确定续费率统计口径和更新频率</div></div>
+    <div class="progress-row" data-status="not-started"><div class="td">退费率数据看板</div><div class="td"><span class="status-tag status-not-started">未开始</span></div><div class="td"><span class="priority-mid">中</span></div><div class="td td-owner">待分配</div><div class="td td-next">确定退费率统计口径和更新频率</div></div>
+    <div class="progress-row" data-status="not-started"><div class="td">主讲维度数据看板</div><div class="td"><span class="status-tag status-not-started">未开始</span></div><div class="td"><span class="priority-low">低</span></div><div class="td td-owner">待分配</div><div class="td td-next">待经营数据系统基础搭建完成后启动</div></div>
+    <div class="progress-row" data-status="not-started"><div class="td">课程维度数据看板</div><div class="td"><span class="status-tag status-not-started">未开始</span></div><div class="td"><span class="priority-low">低</span></div><div class="td td-owner">待分配</div><div class="td td-next">待经营数据系统基础搭建完成后启动</div></div>
+    <div class="progress-row" data-status="not-started"><div class="td">AI 助手知识库</div><div class="td"><span class="status-tag status-not-started">未开始</span></div><div class="td"><span class="priority-low">低</span></div><div class="td td-owner">待分配</div><div class="td td-next">待 V1.0 阶段启动，需内容库积累到一定规模</div></div>
+  </div>
+</div>
+
+<!-- ── Outcomes ── -->
+<div class="section" id="outcomes">
+  <div class="section-header">
+    <span class="section-num">11</span>
+    <h2 class="section-title">成果入口</h2>
+  </div>
+  <div class="outcome-grid">
+    <a href="#" class="outcome-btn"><div class="outcome-btn-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="6" height="6" rx="1" fill="#2e7d9a"/><rect x="10" y="2" width="6" height="6" rx="1" fill="#2e7d9a" opacity=".5"/><rect x="2" y="10" width="6" height="6" rx="1" fill="#2e7d9a" opacity=".5"/><rect x="10" y="10" width="6" height="6" rx="1" fill="#2e7d9a" opacity=".3"/></svg></div><div class="outcome-btn-name">教学案例库</div><div class="outcome-btn-note">课堂问题 · 处理方案 · 经验总结</div></a>
+    <a href="#" class="outcome-btn"><div class="outcome-btn-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 4h12M3 8h8M3 12h10" stroke="#2e7d9a" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="outcome-btn-name">教师培训资料</div><div class="outcome-btn-note">Trial 课 · 课堂方法 · 培训 PPT</div></a>
+    <a href="#" class="outcome-btn"><div class="outcome-btn-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6" stroke="#2e7d9a" stroke-width="1.5"/><path d="M9 6v3l2 2" stroke="#2e7d9a" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="outcome-btn-name">高分案例库</div><div class="outcome-btn-note">KET · PET · FCE 实考成绩案例</div></a>
+    <a href="#" class="outcome-btn"><div class="outcome-btn-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2L11 7H16L12 10L13.5 15L9 12L4.5 15L6 10L2 7H7L9 2Z" stroke="#2e7d9a" stroke-width="1.5" stroke-linejoin="round"/></svg></div><div class="outcome-btn-name">家长好评库</div><div class="outcome-btn-note">好评截图 · 原话摘录 · 使用授权</div></a>
+    <a href="#" class="outcome-btn"><div class="outcome-btn-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="4" width="14" height="10" rx="2" stroke="#2e7d9a" stroke-width="1.5"/><path d="M7 8l2 2 2-2" stroke="#2e7d9a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="outcome-btn-name">学生作品库</div><div class="outcome-btn-note">写作范文 · 演讲视频 · 学生展示</div></a>
+    <a href="#" class="outcome-btn"><div class="outcome-btn-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="3" width="14" height="12" rx="2" stroke="#2e7d9a" stroke-width="1.5"/><path d="M2 7h14" stroke="#2e7d9a" stroke-width="1.5"/><path d="M7 11h4" stroke="#2e7d9a" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="outcome-btn-name">数据看板</div><div class="outcome-btn-note">续费率 · 退费率 · 实考通过率</div></a>
+    <a href="#" class="outcome-btn"><div class="outcome-btn-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="3" stroke="#2e7d9a" stroke-width="1.5"/><path d="M9 2v2M9 14v2M2 9h2M14 9h2M4.22 4.22l1.42 1.42M12.36 12.36l1.42 1.42M4.22 13.78l1.42-1.42M12.36 5.64l1.42-1.42" stroke="#2e7d9a" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="outcome-btn-name">AI 助手提示词库</div><div class="outcome-btn-note">备课助手 · 复盘助手 · 培训助手</div></a>
+  </div>
+</div>
+
+<!-- ── Footer ── -->
+<footer>教学大脑搭建规划 · 内部建设文件 · 随建设进度持续更新</footer>
+
+<!-- ── Custom Confirm Dialog ── -->
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-dialog">
+    <div class="confirm-dialog-title" id="confirm-title">确认操作</div>
+    <div class="confirm-dialog-msg" id="confirm-msg"></div>
+    <div class="confirm-dialog-actions">
+      <button class="confirm-cancel-btn" id="confirm-cancel">取消</button>
+      <button class="confirm-ok-btn" id="confirm-ok">确认删除</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Detail Panel ── -->
+<div class="detail-panel-overlay" id="panel-overlay" onclick="closePanelOverlay(event)"></div>
+<div class="detail-panel" id="detail-panel">
+  <div class="detail-panel-header">
+    <div>
+      <div class="detail-panel-title" id="panel-title">详情</div>
+      <div class="detail-panel-mode" id="panel-mode-label"></div>
+    </div>
+    <button class="detail-panel-close" onclick="closePanel()">&times;</button>
+  </div>
+  <div class="detail-panel-body" id="panel-body"></div>
+  <div class="detail-panel-footer" id="panel-footer" style="display:none">
+    <button class="save-btn" id="panel-save-btn" onclick="saveEdit()">保存修改</button>
+    <button class="cancel-btn" onclick="closePanel()">取消</button>
+  </div>
+</div>
+
+<!-- ── Toast ── -->
+<div class="toast" id="toast"></div>
+
+<!-- ── JavaScript ── -->
+<script>
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+var SB = { url: '', key: '', connected: false };
+var EDIT_STATE = { type: null, id: null };
+
+/* ═══════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════ */
+var _toastTimer = null;
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function() { t.className = 'toast'; }, 2600);
+}
+
+/* ═══════════════════════════════════════════
+   ACCORDION + PROGRESS FILTER
+═══════════════════════════════════════════ */
+function toggleAccordion(h) { h.parentElement.classList.toggle('open'); }
+
+function filterProgress(s, btn) {
+  document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.querySelectorAll('.progress-row').forEach(function(r) {
+    r.style.display = (s === 'all' || r.dataset.status === s) ? '' : 'none';
+  });
+}
+
+/* ═══════════════════════════════════════════
+   SUPABASE CONNECT
+═══════════════════════════════════════════ */
+function setConnStatus(state, msg) {
+  var el = document.getElementById('conn-status');
+  var txt = document.getElementById('conn-status-text');
+  el.className = 'conn-status' + (state === 'ok' ? ' connected' : state === 'err' ? ' error' : '');
+  txt.textContent = msg;
+}
+
+async function connectSupabase() {
+  var url = document.getElementById('sb-url').value.trim().replace(/\/$/, '');
+  var key = document.getElementById('sb-key').value.trim();
+  var errEl = document.getElementById('conn-err');
+  errEl.style.display = 'none';
+
+  if (!url || !key) { errEl.textContent = '请填写 URL 和 Anon Key'; errEl.style.display = 'inline'; return; }
+
+  setConnStatus('', '连接中...');
+  try {
+    var r = await fetch(url + '/rest/v1/knowledge_cards?select=id&limit=1', {
+      headers: { 'apikey': key, 'Authorization': 'Bearer ' + key }
+    });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    SB.url = url; SB.key = key; SB.connected = true;
+    localStorage.setItem('sb_url', url);
+    localStorage.setItem('sb_key', key);
+    setConnStatus('ok', '已连接 Supabase');
+    showToast('Supabase 连接成功', 'success');
+    await refreshAll();
+  } catch(e) {
+    SB.connected = false;
+    setConnStatus('err', '连接失败');
+    errEl.textContent = '连接失败：' + e.message + '。请检查 URL、Key 及数据库表是否已创建。';
+    errEl.style.display = 'inline';
+  }
+}
+
+/* ═══════════════════════════════════════════
+   SUPABASE FETCH HELPERS
+═══════════════════════════════════════════ */
+function sbHeaders(extra) {
+  var h = { 'apikey': SB.key, 'Authorization': 'Bearer ' + SB.key, 'Content-Type': 'application/json', 'Prefer': 'return=representation' };
+  return Object.assign(h, extra || {});
+}
+
+async function sbSelect(table, order) {
+  var url = SB.url + '/rest/v1/' + table + '?select=*&order=' + (order || 'created_at.desc');
+  var r = await fetch(url, { headers: sbHeaders() });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+async function sbInsert(table, data) {
+  var r = await fetch(SB.url + '/rest/v1/' + table, {
+    method: 'POST', headers: sbHeaders(), body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+async function sbUpdate(table, id, data) {
+  var r = await fetch(SB.url + '/rest/v1/' + table + '?id=eq.' + id, {
+    method: 'PATCH', headers: sbHeaders(), body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error(await r.text());
+  return r.json();
+}
+
+async function sbDelete(table, id) {
+  var r = await fetch(SB.url + '/rest/v1/' + table + '?id=eq.' + id, {
+    method: 'DELETE', headers: sbHeaders({ 'Prefer': 'return=minimal' })
+  });
+  if (!r.ok) throw new Error(await r.text());
+}
+
+/* ═══════════════════════════════════════════
+   FORM HELPERS
+═══════════════════════════════════════════ */
+function gv(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
+function sv(id, v) { var el = document.getElementById(id); if (el) el.value = v || ''; }
+function clearEl(id) { sv(id, ''); if (document.getElementById(id)) document.getElementById(id).classList.remove('error'); }
+
+function validateReq(ids) {
+  var ok = true;
+  ids.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (!el.value.trim()) { el.classList.add('error'); ok = false; }
+    else el.classList.remove('error');
+  });
+  return ok;
+}
+
+function clearForm(prefix, fields) {
+  fields.forEach(function(f) { clearEl(prefix + '-' + f); });
+}
+
+/* ═══════════════════════════════════════════
+   DRAFT (localStorage fallback)
+═══════════════════════════════════════════ */
+var DRAFT_K_FIELDS = ['title','scenario','core_principle','standard_practice','example_case','common_mistakes','related_materials','submitter'];
+var DRAFT_C_FIELDS = ['problem','student_background','classroom_performance','cause_analysis','solution','implementation_process','result','lesson_learned','reusable_scenarios','submitter'];
+var DRAFT_R_FIELDS = ['student_background','learning_period','lead_teacher','starting_level','final_result','key_teaching_actions','parent_feedback','public_materials','suitable_usage','privacy_authorization_status','submitter'];
+
+function saveDraft(type, fields, prefix) {
+  var d = {};
+  fields.forEach(function(f) { d[f] = gv(prefix + '-' + f); });
+  localStorage.setItem('draft_' + type, JSON.stringify(d));
+}
+function hasDraft(type) {
+  var s = localStorage.getItem('draft_' + type);
+  if (!s) return false;
+  try { var d = JSON.parse(s); return Object.values(d).some(function(v) { return v; }); } catch(e) { return false; }
+}
+function restoreDraft(type) {
+  var s = localStorage.getItem('draft_' + type);
+  if (!s) return;
+  try {
+    var d = JSON.parse(s);
+    var prefix = type === 'knowledge' ? 'k' : type === 'case' ? 'c' : 'r';
+    Object.keys(d).forEach(function(f) { sv(prefix + '-' + f, d[f]); });
+    showToast('草稿已恢复，可继续填写后重新提交');
+  } catch(e) {}
+}
+function clearDraft(type) {
+  localStorage.removeItem('draft_' + type);
+  document.getElementById('draft-' + (type === 'knowledge' ? 'k' : type === 'case' ? 'c' : 'r')).classList.remove('visible');
+}
+function checkDraftBanners() {
+  if (hasDraft('knowledge')) document.getElementById('draft-k').classList.add('visible');
+  if (hasDraft('case')) document.getElementById('draft-c').classList.add('visible');
+  if (hasDraft('result')) document.getElementById('draft-r').classList.add('visible');
+}
+
+/* ═══════════════════════════════════════════
+   SUBMIT FORMS
+═══════════════════════════════════════════ */
+async function submitForm(type) {
+  if (!SB.connected) { showToast('请先在系统配置区连接 Supabase', 'error'); return; }
+
+  if (type === 'knowledge') {
+    if (!validateReq(['k-title','k-scenario','k-standard_practice','k-submitter'])) {
+      document.getElementById('k-err').classList.add('visible'); return;
+    }
+    document.getElementById('k-err').classList.remove('visible');
+    var data = { title: gv('k-title'), scenario: gv('k-scenario'), core_principle: gv('k-core_principle'),
+      standard_practice: gv('k-standard_practice'), example_case: gv('k-example_case'),
+      common_mistakes: gv('k-common_mistakes'), related_materials: gv('k-related_materials'), submitter: gv('k-submitter') };
+    var btn = document.getElementById('k-submit-btn');
+    btn.disabled = true; btn.textContent = '提交中...';
+    try {
+      await sbInsert('knowledge_cards', data);
+      clearForm('k', DRAFT_K_FIELDS);
+      clearDraft('knowledge');
+      showToast('已提交到知识卡库', 'success');
+      await loadTable('knowledge');
+    } catch(e) {
+      saveDraft('knowledge', DRAFT_K_FIELDS, 'k');
+      document.getElementById('draft-k').classList.add('visible');
+      showToast('提交失败，内容已暂存到本地：' + e.message, 'error');
+    } finally { btn.disabled = false; btn.textContent = '提交到知识卡库'; }
+
+  } else if (type === 'case') {
+    if (!validateReq(['c-problem','c-solution','c-submitter'])) {
+      document.getElementById('c-err').classList.add('visible'); return;
+    }
+    document.getElementById('c-err').classList.remove('visible');
+    var data = { problem: gv('c-problem'), student_background: gv('c-student_background'),
+      classroom_performance: gv('c-classroom_performance'), cause_analysis: gv('c-cause_analysis'),
+      solution: gv('c-solution'), implementation_process: gv('c-implementation_process'),
+      result: gv('c-result'), lesson_learned: gv('c-lesson_learned'),
+      reusable_scenarios: gv('c-reusable_scenarios'), submitter: gv('c-submitter') };
+    var btn = document.getElementById('c-submit-btn');
+    btn.disabled = true; btn.textContent = '提交中...';
+    try {
+      await sbInsert('teaching_cases', data);
+      clearForm('c', DRAFT_C_FIELDS);
+      clearDraft('case');
+      showToast('已提交到教学案例库', 'success');
+      await loadTable('case');
+    } catch(e) {
+      saveDraft('case', DRAFT_C_FIELDS, 'c');
+      document.getElementById('draft-c').classList.add('visible');
+      showToast('提交失败，内容已暂存到本地：' + e.message, 'error');
+    } finally { btn.disabled = false; btn.textContent = '提交到教学案例库'; }
+
+  } else if (type === 'result') {
+    if (!validateReq(['r-student_background','r-learning_period','r-lead_teacher','r-starting_level','r-final_result','r-key_teaching_actions','r-submitter'])) {
+      document.getElementById('r-err').classList.add('visible'); return;
+    }
+    document.getElementById('r-err').classList.remove('visible');
+    var data = { student_background: gv('r-student_background'), learning_period: gv('r-learning_period'),
+      lead_teacher: gv('r-lead_teacher'), starting_level: gv('r-starting_level'),
+      final_result: gv('r-final_result'), key_teaching_actions: gv('r-key_teaching_actions'),
+      parent_feedback: gv('r-parent_feedback'), public_materials: gv('r-public_materials'),
+      suitable_usage: gv('r-suitable_usage'), privacy_authorization_status: gv('r-privacy_authorization_status'),
+      submitter: gv('r-submitter') };
+    var btn = document.getElementById('r-submit-btn');
+    btn.disabled = true; btn.textContent = '提交中...';
+    try {
+      await sbInsert('success_cases', data);
+      clearForm('r', DRAFT_R_FIELDS);
+      clearDraft('result');
+      showToast('已提交到成果传播案例库', 'success');
+      await loadTable('result');
+    } catch(e) {
+      saveDraft('result', DRAFT_R_FIELDS, 'r');
+      document.getElementById('draft-r').classList.add('visible');
+      showToast('提交失败，内容已暂存到本地：' + e.message, 'error');
+    } finally { btn.disabled = false; btn.textContent = '提交到成果传播案例库'; }
+  }
+}
+
+/* ═══════════════════════════════════════════
+   TABLE RENDER
+═══════════════════════════════════════════ */
+function tr(s, n) { if (!s) return '<span style="color:var(--text-light)">—</span>'; return s.length > n ? s.slice(0,n)+'…' : s; }
+function fmtDate(s) { if (!s) return '—'; return s.replace('T',' ').slice(0,16); }
+
+function renderKnowledgeRow(rec) {
+  return '<tr><td>'+tr(rec.title,28)+'</td><td class="muted">'+tr(rec.scenario,32)+'</td><td class="muted">'+(rec.submitter||'—')+'</td><td class="muted">'+fmtDate(rec.updated_at||rec.created_at)+'</td><td>'+actionBtns('knowledge',rec.id)+'</td></tr>';
+}
+function renderCaseRow(rec) {
+  return '<tr><td>'+tr(rec.problem,26)+'</td><td class="muted">'+tr(rec.student_background,20)+'</td><td class="muted">'+tr(rec.solution,28)+'</td><td class="muted">'+tr(rec.result,20)+'</td><td class="muted">'+(rec.submitter||'—')+'</td><td class="muted">'+fmtDate(rec.updated_at||rec.created_at)+'</td><td>'+actionBtns('case',rec.id)+'</td></tr>';
+}
+function renderResultRow(rec) {
+  return '<tr><td>'+tr(rec.student_background,24)+'</td><td class="muted">'+tr(rec.final_result,20)+'</td><td class="muted">'+(rec.lead_teacher||'—')+'</td><td class="muted">'+(rec.privacy_authorization_status||'—')+'</td><td class="muted">'+tr(rec.suitable_usage,20)+'</td><td class="muted">'+fmtDate(rec.updated_at||rec.created_at)+'</td><td>'+actionBtns('result',rec.id)+'</td></tr>';
+}
+function actionBtns(type, id) {
+  return '<div class="lib-actions">'
+    +'<button class="lib-action-btn" onclick="viewDetail(\''+type+'\',\''+id+'\')">查看详情</button>'
+    +'<button class="lib-action-btn" onclick="openEdit(\''+type+'\',\''+id+'\')">编辑</button>'
+    +'<button class="lib-action-btn del" onclick="deleteRecord(\''+type+'\',\''+id+'\')">删除</button>'
+    +'</div>';
+}
+
+var _cache = { knowledge: [], case: [], result: [], dashboard: [], insight: [] };
+
+async function loadTable(type) {
+  if (!SB.connected) return;
+  var tableMap = { knowledge: 'knowledge_cards', case: 'teaching_cases', result: 'success_cases' };
+  try {
+    var rows = await sbSelect(tableMap[type]);
+    _cache[type] = rows;
+    renderTable(type, rows);
+  } catch(e) {
+    showToast('加载数据失败：' + e.message, 'error');
+  }
+}
+
+function renderTable(type, rows) {
+  var tbody = document.getElementById('tbody-' + type);
+  var table = document.getElementById('table-' + type);
+  var empty = document.getElementById('empty-' + type);
+  var cnt = document.getElementById('cnt-' + type);
+  cnt.textContent = rows.length;
+  if (!rows.length) { table.style.display = 'none'; empty.style.display = ''; return; }
+  empty.style.display = 'none'; table.style.display = '';
+  var renderFn = type === 'knowledge' ? renderKnowledgeRow : type === 'case' ? renderCaseRow : renderResultRow;
+  tbody.innerHTML = rows.map(renderFn).join('');
+}
+
+async function refreshAll() {
+  await Promise.all([loadTable('knowledge'), loadTable('case'), loadTable('result'), loadDashboards(), loadInsights()]);
+  updateCockpitStats();
+}
+
+/* ═══════════════════════════════════════════
+   TAB
+═══════════════════════════════════════════ */
+function switchTab(type, el) {
+  document.querySelectorAll('.lib-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.lib-panel').forEach(function(p) { p.classList.remove('active'); });
+  el.classList.add('active');
+  document.getElementById('panel-' + type).classList.add('active');
+}
+
+/* ═══════════════════════════════════════════
+   DETAIL PANEL (view)
+═══════════════════════════════════════════ */
+var LABELS = {
+  knowledge: [['title','标题'],['scenario','适用场景'],['core_principle','核心原则'],['standard_practice','标准做法'],['example_case','示范案例'],['common_mistakes','常见错误'],['related_materials','关联资料'],['submitter','填写人'],['created_at','创建时间'],['updated_at','更新时间']],
+  case: [['problem','问题'],['student_background','学生背景'],['classroom_performance','课堂表现'],['cause_analysis','原因分析'],['solution','解决方案'],['implementation_process','执行过程'],['result','结果'],['lesson_learned','经验总结'],['reusable_scenarios','可复用场景'],['submitter','填写人'],['created_at','创建时间'],['updated_at','更新时间']],
+  result: [['student_background','学生背景'],['learning_period','学习周期'],['lead_teacher','主讲老师'],['starting_level','起点水平'],['final_result','最终结果'],['key_teaching_actions','关键教学动作'],['parent_feedback','家长评价'],['public_materials','可公开素材'],['suitable_usage','适合用于'],['privacy_authorization_status','隐私授权状态'],['submitter','填写人'],['created_at','创建时间'],['updated_at','更新时间']]
+};
+var PANEL_TITLES = { knowledge: '知识卡详情', case: '教学案例卡详情', result: '成果传播案例卡详情' };
+
+function openPanel() {
+  document.getElementById('panel-overlay').classList.add('open');
+  document.getElementById('detail-panel').classList.add('open');
+}
+function closePanel() {
+  document.getElementById('panel-overlay').classList.remove('open');
+  document.getElementById('detail-panel').classList.remove('open');
+  EDIT_STATE.type = null; EDIT_STATE.id = null;
+}
+function closePanelOverlay(e) { if (e.target === document.getElementById('panel-overlay')) closePanel(); }
+
+function viewDetail(type, id) {
+  var rec = (_cache[type] || []).find(function(r) { return String(r.id) === String(id); });
+  if (!rec) { showToast('未找到该记录，请刷新后重试'); return; }
+  document.getElementById('panel-title').textContent = PANEL_TITLES[type];
+  document.getElementById('panel-mode-label').textContent = '查看模式';
+  document.getElementById('panel-footer').style.display = 'none';
+  document.getElementById('panel-body').innerHTML = LABELS[type].map(function(pair) {
+    var val = rec[pair[0]];
+    var isDate = pair[0].endsWith('_at');
+    var display = isDate ? fmtDate(val) : (val || '');
+    var cls = display ? '' : ' empty';
+    return '<div class="detail-field"><div class="detail-field-key">'+pair[1]+'</div><div class="detail-field-val'+cls+'">'+(display || '未填写')+'</div></div>';
+  }).join('');
+  openPanel();
+}
+
+/* ═══════════════════════════════════════════
+   EDIT
+═══════════════════════════════════════════ */
+var EDIT_REQUIRED = {
+  knowledge: ['title','scenario','standard_practice','submitter'],
+  case: ['problem','solution','submitter'],
+  result: ['student_background','learning_period','lead_teacher','starting_level','final_result','key_teaching_actions','submitter']
+};
+
+function openEdit(type, id) {
+  var rec = (_cache[type] || []).find(function(r) { return String(r.id) === String(id); });
+  if (!rec) { showToast('未找到该记录，请刷新后重试'); return; }
+  EDIT_STATE.type = type; EDIT_STATE.id = id;
+  document.getElementById('panel-title').textContent = PANEL_TITLES[type].replace('详情','编辑');
+  document.getElementById('panel-mode-label').textContent = '编辑模式';
+  document.getElementById('panel-footer').style.display = 'flex';
+
+  var reqSet = new Set(EDIT_REQUIRED[type] || []);
+  document.getElementById('panel-body').innerHTML = LABELS[type].filter(function(p) {
+    return !p[0].endsWith('_at');
+  }).map(function(pair) {
+    var key = pair[0]; var label = pair[1];
+    var val = rec[key] || '';
+    var reqMark = reqSet.has(key) ? '<span class="req">*</span>' : '';
+    var isPrivacySelect = key === 'privacy_authorization_status';
+    var isStatusSelect = key === 'status' && type === 'insight';
+    var isCategorySelect = key === 'category' && type === 'dashboard';
+    var isSelect = isPrivacySelect || isStatusSelect || isCategorySelect;
+    var isLong = ['core_principle','standard_practice','example_case','common_mistakes','classroom_performance','cause_analysis','solution','implementation_process','result','lesson_learned','key_teaching_actions','parent_feedback','description','finding','root_cause','action_plan'].indexOf(key) !== -1;
+    var isUrl = key === 'dashboard_url';
+    var input;
+    if (isPrivacySelect) {
+      input = '<select class="form-select" id="edit-'+key+'"><option value="">请选择</option><option'+(val==='已授权'?' selected':'')+'>已授权</option><option'+(val==='待确认'?' selected':'')+'>待确认</option><option'+(val==='不可公开'?' selected':'')+'>不可公开</option></select>';
+    } else if (isStatusSelect) {
+      input = '<select class="form-select" id="edit-'+key+'">'+['待分析','待执行','执行中','已验证','已关闭'].map(function(s){return '<option'+(val===s?' selected':'')+'>'+s+'</option>';}).join('')+'</select>';
+    } else if (isCategorySelect) {
+      input = '<select class="form-select" id="edit-'+key+'"><option value="">请选择</option>'+['满意度调研','成绩分析','通过率分析','续费率分析','退费率分析','主讲分析','课程分析','市场分析','其他'].map(function(s){return '<option'+(val===s?' selected':'')+'>'+s+'</option>';}).join('')+'</select>';
+    } else if (isSelect) { // fallthrough (shouldn't happen)
+      input = '<input class="form-input" id="edit-'+key+'" value="'+escHtml(val)+'">';
+    } else if (isLong) {
+      input = '<textarea class="form-textarea" id="edit-'+key+'" style="min-height:80px">'+escHtml(val)+'</textarea>';
+    } else if (isUrl) {
+      input = '<input class="form-input" type="url" id="edit-'+key+'" value="'+escHtml(val)+'">';
+    } else {
+      input = '<input class="form-input" id="edit-'+key+'" value="'+escHtml(val)+'">';
+    }
+    return '<div class="detail-edit-group"><label class="detail-edit-label">'+label+reqMark+'</label>'+input+'</div>';
+  }).join('');
+  openPanel();
+}
+
+function escHtml(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+async function saveEdit() {
+  var type = EDIT_STATE.type; var id = EDIT_STATE.id;
+  if (!type || !id) return;
+  var tableMap = { knowledge: 'knowledge_cards', case: 'teaching_cases', result: 'success_cases', dashboard: 'dashboard_items', insight: 'insight_items' };
+
+  var data = {};
+  LABELS[type].forEach(function(pair) {
+    var key = pair[0];
+    if (key.endsWith('_at')) return;
+    var el = document.getElementById('edit-' + key);
+    if (el) data[key] = el.value.trim();
+  });
+
+  var reqFields = (EDIT_REQUIRED[type] || []).map(function(f) { return 'edit-' + f; });
+  if (!validateReq(reqFields)) { showToast('请补充必填字段', 'error'); return; }
+
+  var btn = document.getElementById('panel-save-btn');
+  btn.disabled = true; btn.textContent = '保存中...';
+  try {
+    await sbUpdate(tableMap[type], id, data);
+    showToast('保存成功', 'success');
+    closePanel();
+    if (type === 'dashboard') await loadDashboards();
+    else if (type === 'insight') await loadInsights();
+    else await loadTable(type);
+    updateCockpitStats();
+  } catch(e) {
+    showToast('保存失败：' + e.message, 'error');
+  } finally { btn.disabled = false; btn.textContent = '保存修改'; }
+}
+
+/* ═══════════════════════════════════════════
+   DELETE
+═══════════════════════════════════════════ */
+async function deleteRecord(type, id) {
+  var ok = await showConfirm('确认删除这条记录？删除后无法恢复。', '确认删除');
+  if (!ok) return;
+  var tableMap = { knowledge: 'knowledge_cards', case: 'teaching_cases', result: 'success_cases', dashboard: 'dashboard_items', insight: 'insight_items' };
+  try {
+    await sbDelete(tableMap[type], id);
+    showToast('已删除', 'success');
+    if (type === 'dashboard') await loadDashboards();
+    else if (type === 'insight') await loadInsights();
+    else await loadTable(type);
+    updateCockpitStats();
+  } catch(e) {
+    showToast('删除失败：' + e.message, 'error');
+  }
+}
+
+/* ═══════════════════════════════════════════
+   JSON EXPORT / IMPORT
+═══════════════════════════════════════════ */
+async function exportJSON() {
+  if (!SB.connected) { showToast('请先连接 Supabase', 'error'); return; }
+  try {
+    var [k, c, r, d, ins] = await Promise.all([
+      sbSelect('knowledge_cards'), sbSelect('teaching_cases'), sbSelect('success_cases'),
+      sbSelect('dashboard_items'), sbSelect('insight_items')
+    ]);
+    var payload = { exported_at: new Date().toISOString(), knowledge_cards: k, teaching_cases: c, success_cases: r, dashboard_items: d, insight_items: ins };
+    var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    var d = new Date(); var ds = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    a.download = 'teaching-brain-backup-' + ds + '.json';
+    a.click();
+    showToast('导出成功', 'success');
+  } catch(e) {
+    showToast('导出失败：' + e.message, 'error');
+  }
+}
+
+async function importJSON(input) {
+  var file = input.files[0];
+  if (!file) return;
+  if (!SB.connected) { showToast('请先连接 Supabase', 'error'); input.value = ''; return; }
+  var ok = await showConfirm('导入数据将追加到当前数据库中，不会自动覆盖现有数据。确认继续？', '确认导入');
+  if (!ok) { input.value = ''; return; }
+  var reader = new FileReader();
+  reader.onload = async function(e) {
+    try {
+      var data = JSON.parse(e.target.result);
+      function strip(arr) { return (arr||[]).map(function(r) { var d = Object.assign({},r); delete d.id; delete d.created_at; delete d.updated_at; return d; }); }
+      var kk=strip(data.knowledge_cards), cc=strip(data.teaching_cases), rr=strip(data.success_cases);
+      var dd=strip(data.dashboard_items), ii=strip(data.insight_items);
+      var inserts = [];
+      if (kk.length) inserts.push(fetch(SB.url+'/rest/v1/knowledge_cards', { method:'POST', headers: sbHeaders(), body: JSON.stringify(kk) }));
+      if (cc.length) inserts.push(fetch(SB.url+'/rest/v1/teaching_cases', { method:'POST', headers: sbHeaders(), body: JSON.stringify(cc) }));
+      if (rr.length) inserts.push(fetch(SB.url+'/rest/v1/success_cases', { method:'POST', headers: sbHeaders(), body: JSON.stringify(rr) }));
+      if (dd.length) inserts.push(fetch(SB.url+'/rest/v1/dashboard_items', { method:'POST', headers: sbHeaders(), body: JSON.stringify(dd) }));
+      if (ii.length) inserts.push(fetch(SB.url+'/rest/v1/insight_items', { method:'POST', headers: sbHeaders(), body: JSON.stringify(ii) }));
+      await Promise.all(inserts);
+      await refreshAll();
+      showToast('导入成功：知识卡 '+kk.length+'，案例 '+cc.length+'，成果 '+rr.length+'，看板 '+dd.length+'，洞察 '+ii.length, 'success');
+    } catch(e) {
+      showToast('导入失败：' + e.message, 'error');
+    } finally { input.value = ''; }
+  };
+  reader.readAsText(file);
+}
+
+/* ═══════════════════════════════════════════
+   CUSTOM CONFIRM DIALOG
+═══════════════════════════════════════════ */
+var _confirmResolve = null;
+function showConfirm(msg, title) {
+  return new Promise(function(resolve) {
+    _confirmResolve = resolve;
+    document.getElementById('confirm-msg').textContent = msg;
+    document.getElementById('confirm-title').textContent = title || '确认操作';
+    document.getElementById('confirm-overlay').classList.add('open');
+  });
+}
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('confirm-ok').addEventListener('click', function() {
+    document.getElementById('confirm-overlay').classList.remove('open');
+    if (_confirmResolve) { _confirmResolve(true); _confirmResolve = null; }
+  });
+  document.getElementById('confirm-cancel').addEventListener('click', function() {
+    document.getElementById('confirm-overlay').classList.remove('open');
+    if (_confirmResolve) { _confirmResolve(false); _confirmResolve = null; }
+  });
+  document.getElementById('confirm-overlay').addEventListener('click', function(e) {
+    if (e.target === this) {
+      this.classList.remove('open');
+      if (_confirmResolve) { _confirmResolve(false); _confirmResolve = null; }
+    }
+  });
+});
+
+/* ═══════════════════════════════════════════
+   DASHBOARD CENTER
+═══════════════════════════════════════════ */
+async function submitDashboard() {
+  if (!SB.connected) { showToast('请先连接 Supabase', 'error'); return; }
+  if (!validateReq(['d-title','d-category'])) { document.getElementById('d-err').classList.add('visible'); return; }
+  document.getElementById('d-err').classList.remove('visible');
+  var data = { title: gv('d-title'), category: gv('d-category'), description: gv('d-description'),
+    owner: gv('d-owner'), data_source: gv('d-data_source'), dashboard_url: gv('d-dashboard_url') };
+  var btn = document.getElementById('d-submit-btn');
+  btn.disabled = true; btn.textContent = '添加中...';
+  try {
+    await sbInsert('dashboard_items', data);
+    clearForm('d', ['title','category','description','owner','data_source','dashboard_url']);
+    showToast('看板已添加', 'success');
+    await loadDashboards();
+    await loadInsights(); // refresh insight dashboard select
+  } catch(e) {
+    showToast('添加失败：' + e.message, 'error');
+  } finally { btn.disabled = false; btn.textContent = '添加看板'; }
+}
+
+async function loadDashboards() {
+  if (!SB.connected) return;
+  try {
+    var rows = await sbSelect('dashboard_items');
+    _cache.dashboard = rows;
+    renderDashboardCards();
+    populateDashboardSelect();
+    updateCockpitStats();
+  } catch(e) { showToast('加载看板失败：' + e.message, 'error'); }
+}
+
+function renderDashboardCards() {
+  var rows = _cache.dashboard || [];
+  var grid = document.getElementById('dashboard-grid');
+  var empty = document.getElementById('dashboard-empty');
+  if (!rows.length) { grid.style.display = 'none'; empty.style.display = ''; return; }
+  empty.style.display = 'none'; grid.style.display = '';
+  var insightCounts = {};
+  (_cache.insight || []).forEach(function(ins) {
+    if (ins.source_dashboard) insightCounts[ins.source_dashboard] = (insightCounts[ins.source_dashboard] || 0) + 1;
+  });
+  grid.innerHTML = rows.map(function(d) {
+    var cat = d.category || '其他';
+    var cbg = 'cbg-' + cat;
+    var iCount = insightCounts[d.id] || 0;
+    var linkBtn = d.dashboard_url ? '<a class="dashboard-link-btn" href="'+escHtml(d.dashboard_url)+'" target="_blank" rel="noopener">打开看板</a>' : '';
+    return '<div class="dashboard-card cat-'+escHtml(cat)+'">'
+      +'<span class="dashboard-cat-badge '+cbg+'">'+escHtml(cat)+'</span>'
+      +'<div class="dashboard-card-title">'+escHtml(d.title)+'</div>'
+      +(d.description ? '<div class="dashboard-card-desc">'+escHtml(d.description)+'</div>' : '')
+      +'<div class="dashboard-card-meta">'+(d.owner?'负责人：'+escHtml(d.owner)+'　':'')+(d.data_source?'来源：'+escHtml(d.data_source):'')+'</div>'
+      +'<div class="dashboard-card-footer">'
+      +linkBtn
+      +(iCount>0?'<span class="insight-count-badge">'+iCount+' 条洞察</span>':'')
+      +'<button class="lib-action-btn" onclick="viewDetail(\'dashboard\',\''+d.id+'\')">详情</button>'
+      +'<button class="lib-action-btn" onclick="openEdit(\'dashboard\',\''+d.id+'\')">编辑</button>'
+      +'<button class="lib-action-btn del" onclick="deleteRecord(\'dashboard\',\''+d.id+'\')">删除</button>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function populateDashboardSelect() {
+  var sel = document.getElementById('i-source_dashboard');
+  var cur = sel.value;
+  sel.innerHTML = '<option value="">不关联 / 独立洞察</option>';
+  (_cache.dashboard || []).forEach(function(d) {
+    var opt = document.createElement('option');
+    opt.value = d.id;
+    opt.textContent = '['+d.category+'] '+d.title;
+    if (d.id === cur) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+function getDashboardTitle(id) {
+  if (!id) return '';
+  var d = (_cache.dashboard || []).find(function(x) { return x.id === id; });
+  return d ? '['+d.category+'] '+d.title : id;
+}
+
+/* ═══════════════════════════════════════════
+   INSIGHT CENTER
+═══════════════════════════════════════════ */
+var _insightStatusFilter = '全部';
+
+async function submitInsight() {
+  if (!SB.connected) { showToast('请先连接 Supabase', 'error'); return; }
+  if (!validateReq(['i-title','i-finding'])) { document.getElementById('i-err').classList.add('visible'); return; }
+  document.getElementById('i-err').classList.remove('visible');
+  var srcDb = document.getElementById('i-source_dashboard').value;
+  var data = { title: gv('i-title'), source_dashboard: srcDb || null, finding: gv('i-finding'),
+    root_cause: gv('i-root_cause'), action_plan: gv('i-action_plan'),
+    status: gv('i-status') || '待分析', owner: gv('i-owner') };
+  var btn = document.getElementById('i-submit-btn');
+  btn.disabled = true; btn.textContent = '添加中...';
+  try {
+    await sbInsert('insight_items', data);
+    clearForm('i', ['title','finding','root_cause','action_plan','owner']);
+    document.getElementById('i-source_dashboard').value = '';
+    document.getElementById('i-status').value = '待分析';
+    showToast('洞察已添加', 'success');
+    await loadInsights();
+    renderDashboardCards(); // refresh insight badge counts
+  } catch(e) {
+    showToast('添加失败：' + e.message, 'error');
+  } finally { btn.disabled = false; btn.textContent = '添加洞察'; }
+}
+
+async function loadInsights() {
+  if (!SB.connected) return;
+  try {
+    var rows = await sbSelect('insight_items');
+    _cache.insight = rows;
+    renderInsightCards();
+    updateCockpitStats();
+  } catch(e) { showToast('加载洞察失败：' + e.message, 'error'); }
+}
+
+function filterInsight(status, btn) {
+  _insightStatusFilter = status;
+  document.querySelectorAll('.insight-status-tab').forEach(function(t) { t.classList.remove('active'); });
+  btn.classList.add('active');
+  renderInsightCards();
+}
+
+function renderInsightCards() {
+  var rows = _cache.insight || [];
+  var q = (document.getElementById('insight-search').value || '').toLowerCase();
+  if (_insightStatusFilter !== '全部') rows = rows.filter(function(r) { return r.status === _insightStatusFilter; });
+  if (q) rows = rows.filter(function(r) {
+    return (r.title||'').toLowerCase().includes(q) || (r.finding||'').toLowerCase().includes(q) || (r.root_cause||'').toLowerCase().includes(q);
+  });
+  var grid = document.getElementById('insight-grid');
+  var empty = document.getElementById('insight-empty');
+  if (!rows.length) {
+    grid.innerHTML = '<div class="insight-empty">'+((_cache.insight||[]).length===0?'暂无洞察记录。请先连接 Supabase 并添加洞察。':'当前筛选条件下无洞察记录。')+'</div>';
+    return;
+  }
+  grid.innerHTML = rows.map(function(ins) {
+    var badge = '<span class="insight-status-badge badge-'+escHtml(ins.status||'待分析')+'">'+escHtml(ins.status||'待分析')+'</span>';
+    var dbTitle = getDashboardTitle(ins.source_dashboard);
+    return '<div class="insight-card s-'+escHtml(ins.status||'待分析')+'">'
+      +'<div class="insight-card-header">'
+      +'<div><div class="insight-card-title">'+escHtml(ins.title)+'</div>'
+      +'<div class="insight-card-meta">'+(dbTitle?'关联：'+escHtml(dbTitle)+'　':'')+(ins.owner?'负责人：'+escHtml(ins.owner):'')+'</div></div>'
+      +badge+'</div>'
+      +(ins.finding?'<div class="insight-section"><div class="insight-section-label">发现</div><div class="insight-section-text">'+escHtml(ins.finding)+'</div></div>':'')
+      +(ins.root_cause?'<div class="insight-section"><div class="insight-section-label">根因</div><div class="insight-section-text">'+escHtml(ins.root_cause)+'</div></div>':'')
+      +(ins.action_plan?'<div class="insight-section"><div class="insight-section-label">行动方案</div><div class="insight-section-text">'+escHtml(ins.action_plan)+'</div></div>':'')
+      +'<div class="insight-card-footer">'
+      +'<select class="form-select" style="font-size:12px;padding:4px 8px;height:auto;width:auto;" onchange="updateInsightStatus(\''+ins.id+'\',this.value)">'
+      +['待分析','待执行','执行中','已验证','已关闭'].map(function(s){ return '<option'+(ins.status===s?' selected':'')+'>'+s+'</option>'; }).join('')
+      +'</select>'
+      +'<button class="insight-action-btn" onclick="viewDetail(\'insight\',\''+ins.id+'\')">详情</button>'
+      +'<button class="insight-action-btn" onclick="openEdit(\'insight\',\''+ins.id+'\')">编辑</button>'
+      +'<button class="insight-action-btn del" onclick="deleteRecord(\'insight\',\''+ins.id+'\')">删除</button>'
+      +'</div></div>';
+  }).join('');
+}
+
+async function updateInsightStatus(id, status) {
+  if (!SB.connected) { showToast('请先连接 Supabase', 'error'); return; }
+  try {
+    await sbUpdate('insight_items', id, { status: status });
+    var rec = (_cache.insight || []).find(function(r) { return r.id === id; });
+    if (rec) rec.status = status;
+    renderInsightCards();
+    updateCockpitStats();
+    showToast('状态已更新：' + status, 'success');
+  } catch(e) { showToast('更新失败：' + e.message, 'error'); }
+}
+
+/* ═══════════════════════════════════════════
+   COCKPIT
+═══════════════════════════════════════════ */
+function updateCockpitStats() {
+  var types = ['knowledge','case','result','dashboard','insight'];
+  types.forEach(function(t) {
+    var el = document.getElementById('stat-'+t);
+    if (el && _cache[t]) el.textContent = _cache[t].length;
+  });
+  renderCockpitRecent();
+  renderCockpitPending();
+}
+
+function renderCockpitRecent() {
+  var items = [];
+  var push = function(arr, label) { (arr||[]).slice(0,5).forEach(function(r) { items.push({ label: label, name: r.title||r.problem||r.student_background||'—', time: r.created_at }); }); };
+  push(_cache.knowledge, '知识卡');
+  push(_cache.case, '教学案例');
+  push(_cache.result, '成果案例');
+  push(_cache.dashboard, '数据看板');
+  push(_cache.insight, '洞察');
+  items.sort(function(a,b) { return (b.time||'') > (a.time||'') ? 1 : -1; });
+  items = items.slice(0, 8);
+  var el = document.getElementById('cockpit-recent');
+  if (!items.length) { el.innerHTML = '<li><span class="cockpit-empty">暂无数据，请先连接 Supabase</span></li>'; return; }
+  el.innerHTML = items.map(function(it) {
+    return '<li><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+escHtml(it.name)+'</span><span class="cockpit-type-badge">'+it.label+'</span></li>';
+  }).join('');
+}
+
+function renderCockpitPending() {
+  var pending = (_cache.insight || []).filter(function(r) { return r.status === '待分析' || r.status === '待执行'; });
+  var el = document.getElementById('cockpit-pending');
+  if (!pending.length) { el.innerHTML = '<div class="cockpit-empty">暂无待分析 / 待执行洞察</div>'; return; }
+  el.innerHTML = pending.slice(0,6).map(function(ins) {
+    return '<div class="cockpit-pending-row">'
+      +'<div class="cockpit-pending-title">'+escHtml(ins.title)+'</div>'
+      +'<div class="cockpit-pending-meta"><span class="insight-status-badge badge-'+escHtml(ins.status||'待分析')+'" style="font-size:11px;">'+escHtml(ins.status)+'</span>'+(ins.owner?'　'+escHtml(ins.owner):'')+'</div>'
+      +'</div>';
+  }).join('');
+}
+
+/* ═══════════════════════════════════════════
+   EXTEND LABELS / PANEL_TITLES / EDIT_REQUIRED
+═══════════════════════════════════════════ */
+LABELS.dashboard = [['title','标题'],['category','分类'],['description','描述'],['owner','负责人'],['data_source','数据来源'],['dashboard_url','看板链接'],['created_at','创建时间'],['updated_at','更新时间']];
+LABELS.insight = [['title','标题'],['status','状态'],['finding','发现'],['root_cause','根因分析'],['action_plan','行动方案'],['owner','负责人'],['created_at','创建时间'],['updated_at','更新时间']];
+PANEL_TITLES.dashboard = '数据看板详情';
+PANEL_TITLES.insight = '洞察详情';
+EDIT_REQUIRED.dashboard = ['title','category'];
+EDIT_REQUIRED.insight = ['title','finding'];
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', function() {
+  var savedUrl = localStorage.getItem('sb_url');
+  var savedKey = localStorage.getItem('sb_key');
+  if (savedUrl) document.getElementById('sb-url').value = savedUrl;
+  if (savedKey) document.getElementById('sb-key').value = savedKey;
+  if (savedUrl && savedKey) connectSupabase();
+  checkDraftBanners();
+});
+</script>
+</body>
+</html>
