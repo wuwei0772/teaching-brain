@@ -142,6 +142,11 @@
     font-size: 13px; color: var(--text-muted); padding: 2px 0 2px 14px; position: relative;
   }
   .overview-card .sub-modules li::before { content: '·'; position: absolute; left: 2px; color: var(--accent); }
+  .overview-module-btn {
+    appearance: none; background: none; border: 0; border-bottom: 1px solid var(--accent);
+    color: var(--primary); cursor: pointer; font: inherit; font-weight: 700; padding: 0 0 1px;
+  }
+  .overview-module-btn:hover { color: var(--accent); }
   .status-tag {
     display: inline-block; font-size: 12px; font-weight: 600;
     padding: 3px 10px; border-radius: 20px; letter-spacing: 0.02em;
@@ -303,6 +308,21 @@
   .detail-edit-group:last-of-type { margin-bottom: 0; }
   .detail-edit-label { display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 5px; }
   .detail-edit-label .req { color: var(--danger-color); margin-left: 2px; }
+  .lesson-level-intro { color: var(--text-muted); font-size: 14px; line-height: 1.65; margin-bottom: 18px; }
+  .lesson-level-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .lesson-level-card {
+    border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px;
+    background: var(--bg); min-height: 150px; display: flex; flex-direction: column;
+  }
+  .lesson-level-card.available { background: var(--card); border-color: var(--accent); box-shadow: var(--shadow); }
+  .lesson-level-name { color: var(--primary); font-size: 18px; font-weight: 700; }
+  .lesson-level-note { color: var(--text-muted); font-size: 13px; line-height: 1.5; margin: 5px 0 14px; }
+  .lesson-level-card .status-tag { align-self: flex-start; }
+  .lesson-level-link {
+    background: var(--primary); border-radius: var(--radius); color: white; font-size: 13px;
+    font-weight: 600; margin-top: auto; padding: 8px 12px; text-align: center; text-decoration: none;
+  }
+  .lesson-level-link:hover { background: var(--primary-light); }
   .save-btn { background: var(--success); color: white; border: none; border-radius: var(--radius); padding: 10px 22px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 0.15s; }
   .save-btn:hover { background: #236644; }
   .save-btn:disabled { background: #a0aab4; cursor: not-allowed; }
@@ -389,6 +409,16 @@
   .confirm-cancel-btn { background: none; border: 1px solid var(--border); color: var(--text-muted); border-radius: var(--radius); padding: 9px 16px; font-size: 14px; font-family: inherit; cursor: pointer; transition: all 0.15s; }
   .confirm-cancel-btn:hover { border-color: var(--text-muted); color: var(--text); }
 
+  /* ── Supabase Account ── */
+  .cloud-panel { max-width: var(--max-width); margin: 24px auto 0; padding: 0 24px; }
+  .cloud-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow); padding: 18px 20px; }
+  .cloud-title { font-size: 15px; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
+  .cloud-note { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+  .cloud-grid { display: grid; grid-template-columns: 1.2fr 1.2fr 1fr 1fr auto; gap: 8px; align-items: center; }
+  .cloud-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .cloud-status { margin-top: 10px; font-size: 13px; color: var(--warning); }
+  .cloud-status.connected { color: var(--success); }
+
   /* ── Footer ── */
   footer { background: var(--primary); color: rgba(255,255,255,0.5); text-align: center; font-size: 13px; padding: 20px 24px; margin-top: 40px; }
 
@@ -405,12 +435,15 @@
     .accordion-header { padding: 14px 16px; }
     .accordion-body { padding: 0 16px 20px; }
     .lib-topbar { flex-direction: column; align-items: flex-start; }
+    .cloud-grid { grid-template-columns: 1fr 1fr; }
   }
   @media (max-width: 480px) {
     .insight-search { width: 100%; }
     .overview-grid { grid-template-columns: 1fr; }
     #outcome-entry-grid { grid-template-columns: 1fr; }
     .detail-panel { width: 100%; }
+    .cloud-grid { grid-template-columns: 1fr; }
+    .lesson-level-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -446,6 +479,25 @@
   </div>
 </header>
 
+<div class="cloud-panel">
+  <div class="cloud-card">
+    <div class="cloud-title">Supabase 实时数据中心</div>
+    <div class="cloud-note">请使用 Publishable / anon key。数据库迁移完成并登录后，案例、洞察、未来教案和附件都会实时保存到 Supabase。</div>
+    <div class="cloud-grid">
+      <input class="form-input" id="sb-url" placeholder="Supabase Project URL">
+      <input class="form-input" id="sb-key" type="password" placeholder="Publishable / anon key">
+      <input class="form-input" id="sb-email" type="email" placeholder="登录邮箱">
+      <input class="form-input" id="sb-password" type="password" placeholder="密码">
+      <div class="cloud-actions">
+        <button class="submit-btn" onclick="loginSupabase()">登录</button>
+        <button class="lib-btn" onclick="signupSupabase()">注册</button>
+        <button class="lib-btn" id="logout-btn" onclick="logoutSupabase()" style="display:none">退出</button>
+      </div>
+    </div>
+    <div class="cloud-status" id="cloud-status">尚未连接 Supabase</div>
+  </div>
+</div>
+
 <!-- ── Overview ── -->
 <div class="section" id="overview">
   <div class="section-header">
@@ -457,8 +509,8 @@
       <div class="sys-name">内容生产系统</div>
       <div class="sys-desc">沉淀课程标准，让优秀经验可复制</div>
       <ul class="sub-modules">
-        <li>课程大脑</li><li>教研大脑</li><li>教学大脑</li>
-        <li>教师培训大脑</li><li>AI 助手大脑</li>
+        <li>课程</li><li>教研</li><li><button class="overview-module-btn" onclick="openTeachingLibrary()">教学</button></li>
+        <li>教师培训</li><li>AI 助手</li>
       </ul>
       <span class="status-tag status-in-progress">进行中</span>
     </div>
@@ -466,7 +518,7 @@
       <div class="sys-name">服务与案例系统</div>
       <div class="sys-desc">遇到问题时有案例可查、有话术可用</div>
       <ul class="sub-modules">
-        <li>家长沟通大脑</li><li>教学案例大脑</li><li>满意度调研分析</li>
+        <li>家长沟通</li><li>教学案例</li><li>满意度调研分析</li>
       </ul>
       <span class="status-tag status-not-started">未开始</span>
     </div>
@@ -733,7 +785,8 @@
 <div class="toast" id="toast"></div>
 
 <!-- ── JavaScript ── -->
-<script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="text/plain" id="legacy-local-storage-script">
 /* ═══════════════════════════════════════════
    STATE
 ═══════════════════════════════════════════ */
@@ -1307,5 +1360,6 @@ document.addEventListener('DOMContentLoaded', function() {
   if (savedUrl && savedKey) connectSupabase(savedUrl, savedKey);
 });
 </script>
+<script src="./teaching-brain-app.js"></script>
 </body>
 </html>
