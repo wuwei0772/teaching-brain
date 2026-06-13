@@ -3,7 +3,9 @@
 应用代码已经切换为 Supabase 实时存储。首次启用时完成以下步骤：
 
 1. 在 Supabase Dashboard 打开 **SQL Editor**。
-2. 执行 [`supabase/migrations/202606110001_unified_content.sql`](./supabase/migrations/202606110001_unified_content.sql)。
+2. 按顺序执行共享数据平台中的迁移：
+   - `../teaching-data-platform/supabase/migrations/202606110001_unified_content.sql`
+   - `../teaching-data-platform/supabase/migrations/202606130001_teaching_platform.sql`
 3. 在 **Authentication > Providers > Email** 中启用 Email 登录。
 4. 打开应用，在顶部填写：
    - Supabase Project URL
@@ -18,6 +20,10 @@
 - 上传文件会进入私有 Bucket `teaching-brain-files`，元数据写入 `public.attachments`。
 - 其他已登录窗口会通过 Supabase Realtime 自动刷新。
 - 浏览器中旧的 `teaching_brain_outcomes_v1` 案例会自动迁移一次。
+- 教案、教师查看记录和教师反馈由 Teaching Plan 与 Teaching Brain 共享。
+
+数据库迁移、权限和导入工具的唯一维护位置是相邻的
+`teaching-data-platform` 项目。本仓库中的早期迁移文件仅为兼容保留。
 
 未来教案生成模块可调用页面全局函数：
 

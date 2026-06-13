@@ -7,7 +7,7 @@ var LEGACY_MIGRATION_KEY = 'teaching_brain_outcomes_migrated_v1';
 var FILE_BUCKET = 'teaching-brain-files';
 var SB = { client: null, connected: false, workspaceId: '', user: null, channel: null };
 var EDIT_STATE = { type: null, id: null };
-var _cache = { result: [], insight: [] };
+var _cache = { result: [], insight: [], lessonPlans: [], usage: [], feedback: [] };
 var _outcomeFilter = 'teaching';
 var _outcomeDateFilter = 'all';
 var _insightStatusFilter = '全部';
@@ -174,7 +174,7 @@ async function logoutSupabase() {
   if (SB.channel) SB.client.removeChannel(SB.channel);
   if (SB.client) await SB.client.auth.signOut();
   SB.connected = false; SB.workspaceId = ''; SB.user = null; SB.channel = null;
-  _cache.result = []; _cache.insight = [];
+  _cache.result = []; _cache.insight = []; _cache.lessonPlans = []; _cache.usage = []; _cache.feedback = [];
   renderOutcomeLibraries(); renderOutcomes(); renderInsightCards();
   setCloudStatus('已退出登录', false);
 }
@@ -216,10 +216,19 @@ function contentItemToRecord(item) {
     id: item.id,
     type: item.content_type,
     title: (item.content && item.content.title) || item.title,
+    courseCode: item.course_code,
+    levelCode: item.level_code,
+    unitCode: item.unit_code,
+    lessonCode: item.lesson_code,
     createdAt: item.created_at,
     updatedAt: item.updated_at,
     status: item.status
   });
+}
+
+async function readOptionalPlatformTable(table) {
+  var response = await SB.client.from(table).select('*').eq('workspace_id', SB.workspaceId);
+  return response.error ? [] : response.data;
 }
 
 async function refreshAll() {
@@ -235,7 +244,14 @@ async function refreshAll() {
   }
   var records = response.data.map(contentItemToRecord);
   _cache.insight = records.filter(function(row) { return row.type === 'insight'; });
-  _cache.result = records.filter(function(row) { return row.type !== 'insight'; });
+  _cache.lessonPlans = records.filter(function(row) { return row.type === 'lesson_plan'; });
+  _cache.result = records.filter(function(row) { return row.type !== 'insight' && row.type !== 'lesson_plan'; });
+  var platformRows = await Promise.all([
+    readOptionalPlatformTable('lesson_usage_records'),
+    readOptionalPlatformTable('teacher_feedback')
+  ]);
+  _cache.usage = platformRows[0];
+  _cache.feedback = platformRows[1];
   renderOutcomeLibraries(); renderOutcomes(); renderInsightCards();
 }
 
@@ -381,17 +397,39 @@ function closePanel() {
 
 function closePanelOverlay(event) { if (event.target === document.getElementById('panel-overlay')) closePanel(); }
 
+function lessonLevelCount(code) {
+  return (_cache.lessonPlans || []).filter(function(plan) {
+    var platform = plan.platform || {};
+    return plan.levelCode === code || String(platform.level || '').toLowerCase().replace(/\s+/g, '-') === code;
+  }).length;
+}
+
+function lessonLevelCard(name, code, link) {
+  var count = lessonLevelCount(code);
+  var available = Boolean(link);
+  var status = count
+    ? '<span class="status-tag status-done">'+count+' 篇已发布</span>'
+    : '<span class="status-tag '+(available?'status-in-progress':'status-not-started')+'">'+(available?'网页已接入 · 待同步数据库':'待建设')+'</span>';
+  return '<div class="lesson-level-card'+(available?' available':'')+'"><div class="lesson-level-name">'+name+'</div>'
+    +'<div class="lesson-level-note">'+name+' 完整教案库</div>'+status
+    +(available?'<a class="lesson-level-link" href="'+link+'" target="_blank" rel="noopener">打开 '+name+' 教案库 →</a>':'')+'</div>';
+}
+
 function openTeachingLibrary() {
+  var published = (_cache.lessonPlans || []).filter(function(plan) { return plan.status === 'published'; }).length;
+  var summary = SB.connected
+    ? '共享数据库：'+published+' 篇已发布教案 · '+(_cache.usage||[]).length+' 次教师查看 · '+(_cache.feedback||[]).length+' 条教师反馈'
+    : '登录共享 Supabase 后，可查看各册教案、教师使用和反馈数据。';
   document.getElementById('panel-title').textContent = '教学教案库';
-  document.getElementById('panel-mode-label').textContent = '按教材层级查看完整 Lesson Plan';
+  document.getElementById('panel-mode-label').textContent = 'Teaching Plan 核心产品 · Teaching Brain 数据看板';
   document.getElementById('panel-footer').style.display = 'none';
   document.getElementById('panel-body').innerHTML =
-    '<p class="lesson-level-intro">选择教材层级，查看对应的完整课堂流程、教师话术与学习成果。</p>'
+    '<p class="lesson-level-intro">'+summary+'</p>'
     +'<div class="lesson-level-grid">'
-    +'<div class="lesson-level-card"><div class="lesson-level-name">Think 1</div><div class="lesson-level-note">Think 1 完整教案库</div><span class="status-tag status-not-started">待建设</span></div>'
-    +'<div class="lesson-level-card"><div class="lesson-level-name">Think 2</div><div class="lesson-level-note">Think 2 完整教案库</div><span class="status-tag status-not-started">待建设</span></div>'
-    +'<div class="lesson-level-card available"><div class="lesson-level-name">Think 3</div><div class="lesson-level-note">完整课堂执行方案、教师话术与 FCE 技能说明</div><span class="status-tag status-in-progress">已接入</span><a class="lesson-level-link" href="https://fce-complete-lesson-plans.vercel.app" target="_blank" rel="noopener">打开 Think 3 教案库 →</a></div>'
-    +'<div class="lesson-level-card"><div class="lesson-level-name">Think 4</div><div class="lesson-level-note">Think 4 完整教案库</div><span class="status-tag status-not-started">待建设</span></div>'
+    +lessonLevelCard('Think 1','think-1','')
+    +lessonLevelCard('Think 2','think-2','')
+    +lessonLevelCard('Think 3','think-3','https://fce-complete-lesson-plans.vercel.app')
+    +lessonLevelCard('Think 4','think-4','')
     +'</div>';
   openPanel();
 }
