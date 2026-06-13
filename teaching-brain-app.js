@@ -14,6 +14,7 @@ var _insightStatusFilter = '全部';
 var _realtimeTimer = null;
 var _toastTimer = null;
 var _confirmResolve = null;
+var RUNTIME_CONFIG = window.TEACHING_PLATFORM_CONFIG || {};
 
 var OUTCOME_TYPES = [
   { key:'teaching', name:'教学案例', library:'教学案例库', fields:[
@@ -117,7 +118,13 @@ function filterProgress(status, btn) {
 }
 
 function loadConfig() {
-  try { return JSON.parse(localStorage.getItem(CONFIG_KEY) || '{}'); }
+  try {
+    var saved = JSON.parse(localStorage.getItem(CONFIG_KEY) || '{}');
+    return {
+      url: RUNTIME_CONFIG.supabaseUrl || saved.url || '',
+      key: RUNTIME_CONFIG.supabasePublishableKey || saved.key || ''
+    };
+  }
   catch (error) { return {}; }
 }
 
@@ -129,6 +136,7 @@ function saveConfig(url, key) {
 
 function createSupabaseClient(url, key) {
   if (!window.supabase || !window.supabase.createClient) throw new Error('Supabase 客户端加载失败');
+  url = String(url || '').replace(/\/rest\/v1\/?$/, '').replace(/\/$/, '');
   SB.client = window.supabase.createClient(url, key, {
     auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
   });

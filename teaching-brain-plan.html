@@ -482,7 +482,7 @@
 <div class="cloud-panel">
   <div class="cloud-card">
     <div class="cloud-title">Supabase 实时数据中心</div>
-    <div class="cloud-note">请使用 Publishable / anon key。数据库迁移完成并登录后，案例、洞察、未来教案和附件都会实时保存到 Supabase。</div>
+    <div class="cloud-note">已连接统一 Teaching Platform 数据库。登录后，教案、案例、教师使用与反馈数据会在两个产品间共享。</div>
     <div class="cloud-grid">
       <input class="form-input" id="sb-url" placeholder="Supabase Project URL">
       <input class="form-input" id="sb-key" type="password" placeholder="Publishable / anon key">
@@ -786,6 +786,7 @@
 
 <!-- ── JavaScript ── -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./runtime-config.js"></script>
 <script type="text/plain" id="legacy-local-storage-script">
 /* ═══════════════════════════════════════════
    STATE

@@ -6,6 +6,7 @@
 2. 按顺序执行共享数据平台中的迁移：
    - `../teaching-data-platform/supabase/migrations/202606110001_unified_content.sql`
    - `../teaching-data-platform/supabase/migrations/202606130001_teaching_platform.sql`
+   - `../teaching-data-platform/supabase/migrations/202606130002_shared_workspace_onboarding.sql`
 3. 在 **Authentication > Providers > Email** 中启用 Email 登录。
 4. 打开应用，在顶部填写：
    - Supabase Project URL
